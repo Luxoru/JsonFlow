@@ -1,9 +1,8 @@
-package me.luxoru.jsonflow.loader;
+package me.luxoru.jsonflow.core.loader;
 
-import com.google.gson.JsonObject;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import me.luxoru.jsonflow.entity.AbstractJsonEntity;
+import me.luxoru.jsonflow.core.entity.AbstractJsonEntity;
 
 @RequiredArgsConstructor
 @Getter
