@@ -12,8 +12,8 @@
 ```java
 public class Example{
     public void loadJson(){
-        JsonObject json = JsonFlow.load("grass_block.json");
-        System.out.println(json.toString());
+        Block block = JsonFlow.load("grass_block.json");
+        System.out.println(json.getMaterial());
     }
 }
 ```
