@@ -4,12 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import me.luxoru.jsonflow.core.file.JsonFile;
 import me.luxoru.jsonflow.core.serializer.AbstractJsonEntityDeserializer;
 
 @JsonDeserialize(using = AbstractJsonEntityDeserializer.class)
-public abstract class AbstractJsonEntity implements JsonEntity{
+public abstract class AbstractJsonEntity<T extends AbstractJsonEntity<T>> implements JsonEntity<T>{
 
-    private String parent;
+    private AbstractJsonEntity<?> parent;
+    private JsonFile<T> jsonFile;
 
     protected final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -23,22 +25,41 @@ public abstract class AbstractJsonEntity implements JsonEntity{
 
     public ObjectNode toJsonObject() throws JsonProcessingException{
         ObjectNode node = objectMapper.createObjectNode();
-        node.put("parent", this.parent);
+        if(this.parent != null){
+            node.set("parent", this.parent.toJsonObject());
+        }
         node.setAll(thisToJsonObject());
         return node;
 
     }
 
     @Override
-    public void setParent(String parent) {
+    public void setParent(JsonEntity<? extends JsonEntity<?>> parent) {
+
+        if(!(parent instanceof AbstractJsonEntity<? extends AbstractJsonEntity<?>> abstractParent)){
+            throw new IllegalStateException("Parent must be an instance of AbstractJsonEntity");
+        }
         if(this.parent != null){
             throw new IllegalStateException("Parent already assigned");
         }
-        this.parent = parent;
+
+        System.out.println("Parent of "+this+" is now "+parent.getJsonFile().getName());
+
+        this.parent = abstractParent;
     }
 
     @Override
-    public String getParent() {
+    public AbstractJsonEntity<?> getParent() {
         return this.parent;
+    }
+
+    @Override
+    public void setJsonFile(JsonFile<T> jsonFile) {
+        this.jsonFile = jsonFile;
+    }
+
+    @Override
+    public JsonFile<T> getJsonFile() {
+        return jsonFile;
     }
 }

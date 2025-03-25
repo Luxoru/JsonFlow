@@ -11,7 +11,7 @@ import java.io.File;
 @RequiredArgsConstructor
 @Getter
 @JsonDeserialize(using = TestObjectDeserializer.class)
-public class Block extends AbstractJsonEntity{
+public class Block extends AbstractJsonEntity<Block>{
 
     private final String texture;
 

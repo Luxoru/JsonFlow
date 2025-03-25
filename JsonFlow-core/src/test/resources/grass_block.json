@@ -1,4 +1,4 @@
 {
-  "parent": "_block",
+  "parent": "src/test/resources/_block",
   "texture": "grass_texture"
 }
