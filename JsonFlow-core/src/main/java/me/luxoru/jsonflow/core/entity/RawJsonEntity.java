@@ -1,6 +1,7 @@
 package me.luxoru.jsonflow.core.entity;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.RequiredArgsConstructor;
@@ -17,13 +18,13 @@ import java.util.Map;
 @RequiredArgsConstructor
 public final class RawJsonEntity extends AbstractJsonEntity<RawJsonEntity> {
 
-    private final Map<String, String> pairs;
+    private final Map<String, JsonNode> pairs;
 
     @Override
     protected ObjectNode thisToJsonObject() throws JsonProcessingException {
         ObjectNode node = objectMapper.createObjectNode();
-        for(Map.Entry<String, String> entry : pairs.entrySet()){
-            node.put(entry.getKey(), entry.getValue());
+        for(Map.Entry<String, JsonNode> entry : pairs.entrySet()){
+            node.set(entry.getKey(), entry.getValue());
         }
 
         return node;

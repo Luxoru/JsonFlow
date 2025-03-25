@@ -1,6 +1,7 @@
 package me.luxoru.jsonflow.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.SneakyThrows;
 import me.luxoru.jsonflow.core.entity.JsonEntity;
 import me.luxoru.jsonflow.core.file.JsonFile;
@@ -10,7 +11,8 @@ import java.io.File;
 
 public class JsonFlow {
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper()
+            .enable(SerializationFeature.INDENT_OUTPUT);
     private static final AbstractJsonFileManager manager = new AbstractJsonFileManager();
 
     public static <T extends JsonEntity<T>> T load(String fileName, Class<T> clazz){

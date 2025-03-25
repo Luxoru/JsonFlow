@@ -2,6 +2,7 @@ package me.luxoru.jsonflow.core.entity;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import me.luxoru.jsonflow.core.file.JsonFile;
@@ -13,7 +14,8 @@ public abstract class AbstractJsonEntity<T extends AbstractJsonEntity<T>> implem
     private AbstractJsonEntity<?> parent;
     private JsonFile<T> jsonFile;
 
-    protected final ObjectMapper objectMapper = new ObjectMapper();
+    protected final ObjectMapper objectMapper = new ObjectMapper()
+            .enable(SerializationFeature.INDENT_OUTPUT);
 
 
     /**
@@ -26,7 +28,9 @@ public abstract class AbstractJsonEntity<T extends AbstractJsonEntity<T>> implem
     public ObjectNode toJsonObject() throws JsonProcessingException{
         ObjectNode node = objectMapper.createObjectNode();
         if(this.parent != null){
-            node.set("parent", this.parent.toJsonObject());
+            node.setAll(this.parent.toJsonObject());
+            node.remove("type");
+            node.remove("parent");
         }
         node.setAll(thisToJsonObject());
         return node;

@@ -32,39 +32,58 @@ public class RawJsonEntityDeserializer extends JsonDeserializer<RawJsonEntity> {
 
     @Override
     public RawJsonEntity deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JacksonException {
-
+        System.out.println("RAW");
         ObjectNode node = p.getCodec().readTree(p);
-
-
-
-        Map<String, String> pairs = new HashMap<>();
-
-        for (Iterator<Map.Entry<String, JsonNode>> it = node.fields(); it.hasNext(); ) {
-            Map.Entry<String, JsonNode> entry = it.next();
-            String key = entry.getKey();
-            JsonNode value = entry.getValue();
-            System.out.println(value);
-            pairs.put(key,  value.toPrettyString());
-        }
-        RawJsonEntity entity = new RawJsonEntity(pairs);
 
         String parent = null;
 
         if(node.get("parent") != null){
             parent = node.get("parent").asText();
-            System.out.println(parent);;
+            System.out.println("Fetching parent: "+parent);;
 
             if(!parent.endsWith(".json")){
                 parent += ".json";
             }
         }
-
+        RawJsonEntity jsonEntity = null;
         if(parent != null){
             JsonFile<RawJsonEntity> abstractJsonEntityJsonFile = fileManager.readFile(new File(parent), RawJsonEntity.class);
-            RawJsonEntity jsonEntity = abstractJsonEntityJsonFile.getJsonEntity();
+            jsonEntity = abstractJsonEntityJsonFile.getJsonEntity();
 
+
+        }
+
+
+
+        Map<String, JsonNode> pairs = new HashMap<>();
+
+        for (Iterator<Map.Entry<String, JsonNode>> it = node.fields(); it.hasNext(); ) {
+            Map.Entry<String, JsonNode> entry = it.next();
+            String key = entry.getKey();
+            JsonNode value = entry.getValue();
+            pairs.put(key,  value);
+        }
+        RawJsonEntity entity = new RawJsonEntity(pairs);
+
+        //Squash tree
+        if(jsonEntity != null){
+            ObjectNode jsonObject = jsonEntity.toJsonObject();
+            jsonObject.fields().forEachRemaining(entry ->{
+                if(!node.has(entry.getKey())){
+                    node.set(entry.getKey(), entry.getValue());
+                }
+            });
+            node.remove("parent");
+            node.remove("type");
+
+        }
+
+        if(jsonEntity != null){
             entity.setParent(jsonEntity);
         }
+
+        System.out.println("BOOM: "+node);
+
 
 
         return entity;

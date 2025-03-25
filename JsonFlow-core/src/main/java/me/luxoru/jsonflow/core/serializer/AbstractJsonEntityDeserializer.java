@@ -18,7 +18,7 @@ import java.io.IOException;
 
 public abstract class AbstractJsonEntityDeserializer<T extends AbstractJsonEntity<T>> extends JsonDeserializer<AbstractJsonEntity<T>> {
 
-    private static final ObjectMapper mapper = new ObjectMapper();
+    protected static final ObjectMapper objectMapper = new ObjectMapper();
 
     private final JsonFileManager fileManager;
 
@@ -33,13 +33,14 @@ public abstract class AbstractJsonEntityDeserializer<T extends AbstractJsonEntit
     @Override
     public final AbstractJsonEntity<T> deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
 
+        System.out.println("ABSTRACT1");
 
         ObjectNode node = p.getCodec().readTree(p);
         String parent = null;
 
         if(node.get("parent") != null){
             parent = node.get("parent").asText();
-            System.out.println(parent);;
+            System.out.println("Fetching parent: "+parent);;
 
             if(!parent.endsWith(".json")){
                 parent += ".json";
@@ -50,22 +51,40 @@ public abstract class AbstractJsonEntityDeserializer<T extends AbstractJsonEntit
 
 
         //TODO: Find parent json and deserialise
-
-
-        T entityData = getEntityData(node);
-
-        System.out.println(entityData);
-
+        RawJsonEntity jsonEntity = null;
         if(parent != null){
+            System.out.println("-----NIG-----");
             JsonFile<RawJsonEntity> abstractJsonEntityJsonFile = fileManager.readFile(new File(parent), RawJsonEntity.class);
-            RawJsonEntity jsonEntity = abstractJsonEntityJsonFile.getJsonEntity();
+            jsonEntity = abstractJsonEntityJsonFile.getJsonEntity();
 
-            entityData.setParent(jsonEntity);
+            System.out.println("-----GER-----");
+        }
+
+        //Squash tree
+        if(jsonEntity != null){
+            ObjectNode jsonObject = jsonEntity.toJsonObject();
+            jsonObject.fields().forEachRemaining(entry ->{
+                if(!node.has(entry.getKey())){
+                    node.set(entry.getKey(), entry.getValue());
+                }
+            });
+            node.remove("parent");
+            node.remove("type");
+
         }
 
 
 
-        //entityData.setParent(parent);
+
+        T entityData = getEntityData(node);
+
+
+        System.out.println("BOOM1: "+node);
+
+        if(jsonEntity != null){
+            entityData.setParent(jsonEntity);
+        }
+
         return entityData;
     }
 
