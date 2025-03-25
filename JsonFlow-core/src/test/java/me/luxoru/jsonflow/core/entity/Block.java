@@ -1,12 +1,14 @@
 package me.luxoru.jsonflow.core.entity;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import me.luxoru.jsonflow.core.serializer.TestObjectDeserializer;
 
 import java.io.File;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Getter
@@ -14,12 +16,23 @@ import java.io.File;
 public class Block extends AbstractJsonEntity<Block>{
 
     private final String texture;
+    public final int[][] positions;
 
 
     @Override
     protected ObjectNode thisToJsonObject() {
         ObjectNode node = objectMapper.createObjectNode();
         node.put("texture", texture);
+        ArrayNode arrayNode = objectMapper.createArrayNode();
+        for (int[] pos : positions) {
+            ArrayNode innerArray = objectMapper.createArrayNode();
+            for (int value : pos) {
+                innerArray.add(value);
+            }
+            arrayNode.add(innerArray);
+        }
+
+        node.set("positions", arrayNode);
         return node;
     }
 
@@ -31,5 +44,10 @@ public class Block extends AbstractJsonEntity<Block>{
     @Override
     public File save() {
         return null;
+    }
+
+
+    public int[][] getPositions() {
+        return positions;
     }
 }
