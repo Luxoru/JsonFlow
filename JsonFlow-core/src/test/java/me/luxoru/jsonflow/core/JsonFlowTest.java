@@ -2,7 +2,6 @@ package me.luxoru.jsonflow.core;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.SneakyThrows;
-import me.luxoru.jsonflow.core.entity.AbstractJsonEntity;
 import me.luxoru.jsonflow.core.entity.Block;
 import org.junit.jupiter.api.Test;
 
@@ -18,10 +17,6 @@ public class JsonFlowTest {
         System.out.println(obj);
 
         if(obj == null)return;
-
-        String name = obj.getJsonFile().getName();
-
-
 
         ObjectNode jsonObject = obj.toJsonObject();
 

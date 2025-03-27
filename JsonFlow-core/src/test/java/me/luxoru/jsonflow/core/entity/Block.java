@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import me.luxoru.jsonflow.api.entity.PersistableEntity;
 import me.luxoru.jsonflow.core.serializer.TestObjectDeserializer;
 
 import java.io.File;
@@ -13,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Getter
 @JsonDeserialize(using = TestObjectDeserializer.class)
-public class Block extends AbstractJsonEntity<Block>{
+public class Block extends AbstractJsonEntity<Block> implements PersistableEntity<Block> {
 
     private final String texture;
     public final int[][] positions;
@@ -44,10 +45,5 @@ public class Block extends AbstractJsonEntity<Block>{
     @Override
     public File save() {
         return null;
-    }
-
-
-    public int[][] getPositions() {
-        return positions;
     }
 }
