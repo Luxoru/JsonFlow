@@ -2,7 +2,7 @@ package me.luxoru.jsonflow.core.manager;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.luxoru.jsonflow.api.entity.JsonEntity;
-import me.luxoru.jsonflow.api.manager.JsonFileManager;
+import me.luxoru.jsonflow.api.manager.JsonEntityManager;
 import me.luxoru.jsonflow.core.entity.RawJsonEntity;
 
 
@@ -12,29 +12,36 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
-public class AbstractJsonFileManager implements JsonFileManager {
+public class AbstractJsonEntityManager implements JsonEntityManager {
 
     private final Map<String, JsonEntity<?>> jsonFileMap;
 
     private final ObjectMapper mapper = new ObjectMapper();
 
-    public AbstractJsonFileManager() {
+    public AbstractJsonEntityManager() {
         jsonFileMap = new HashMap<>();
     }
 
     @Override
-    public <T extends JsonEntity<T>> T readFileRaw(File jsonFile) throws FileNotFoundException {
+    @SuppressWarnings("unchecked")
+    public RawJsonEntity readFileRaw(File jsonFile) throws FileNotFoundException {
         return readFile(jsonFile, RawJsonEntity.class);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public RawJsonEntity readFileRaw(File jsonFile, boolean addFileToCache) throws FileNotFoundException {
         return null;
     }
 
     @Override
-    public JsonEntity<?> getFile(String name) {
+    public JsonEntity<?> getEntity(String name) {
         return jsonFileMap.get(name);
+    }
+
+    @Override
+    public <T extends JsonEntity<T>> JsonEntity<T> getEntity(String name, Class<T> clazz) {
+        return clazz.cast(jsonFileMap.get(name));
     }
 
     @Override
@@ -84,7 +91,7 @@ public class AbstractJsonFileManager implements JsonFileManager {
 
 
     @Override
-    public Collection<JsonEntity<?>> getFiles() {
+    public Collection<JsonEntity<?>> getEntities() {
         return jsonFileMap.values();
     }
 
