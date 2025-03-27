@@ -1,4 +1,4 @@
-package me.luxoru.jsonflow.core.entity;
+package me.luxoru.jsonflow.commons.entity;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import me.luxoru.jsonflow.core.serializer.RawJsonEntityDeserializer;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
