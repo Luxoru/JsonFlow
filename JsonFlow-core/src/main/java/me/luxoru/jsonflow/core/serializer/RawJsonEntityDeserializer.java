@@ -5,12 +5,10 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import me.luxoru.jsonflow.core.entity.RawJsonEntity;
-import me.luxoru.jsonflow.core.file.JsonFile;
-import me.luxoru.jsonflow.core.file.manager.AbstractJsonFileManager;
-import me.luxoru.jsonflow.core.file.manager.JsonFileManager;
+import me.luxoru.jsonflow.core.manager.AbstractJsonEntityManager;
+import me.luxoru.jsonflow.api.manager.JsonEntityManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,13 +18,13 @@ import java.util.Map;
 
 public class RawJsonEntityDeserializer extends JsonDeserializer<RawJsonEntity> {
 
-    private final JsonFileManager fileManager;
+    private final JsonEntityManager fileManager;
 
     public RawJsonEntityDeserializer(){
-        this.fileManager = new AbstractJsonFileManager();
+        this.fileManager = new AbstractJsonEntityManager();
     }
 
-    public RawJsonEntityDeserializer(JsonFileManager manager){
+    public RawJsonEntityDeserializer(JsonEntityManager manager){
         this.fileManager = manager;
     }
 
@@ -47,8 +45,7 @@ public class RawJsonEntityDeserializer extends JsonDeserializer<RawJsonEntity> {
         }
         RawJsonEntity jsonEntity = null;
         if(parent != null){
-            JsonFile<RawJsonEntity> abstractJsonEntityJsonFile = fileManager.readFile(new File(parent), RawJsonEntity.class);
-            jsonEntity = abstractJsonEntityJsonFile.getJsonEntity();
+            jsonEntity = fileManager.readFile(new File(parent), RawJsonEntity.class);
 
 
         }
