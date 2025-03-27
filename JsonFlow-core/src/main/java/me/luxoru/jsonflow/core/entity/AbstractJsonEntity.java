@@ -5,14 +5,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import me.luxoru.jsonflow.core.file.JsonFile;
+import me.luxoru.jsonflow.api.entity.JsonEntity;
+import me.luxoru.jsonflow.api.entity.PersistableEntity;
 import me.luxoru.jsonflow.core.serializer.AbstractJsonEntityDeserializer;
 
 @JsonDeserialize(using = AbstractJsonEntityDeserializer.class)
-public abstract class AbstractJsonEntity<T extends AbstractJsonEntity<T>> implements JsonEntity<T>{
+public abstract class AbstractJsonEntity<T extends AbstractJsonEntity<T>> implements JsonEntity<T> {
 
     private AbstractJsonEntity<?> parent;
-    private JsonFile<T> jsonFile;
+    private String fileName;
+
 
     protected final ObjectMapper objectMapper = new ObjectMapper()
             .enable(SerializationFeature.INDENT_OUTPUT);
@@ -38,18 +40,17 @@ public abstract class AbstractJsonEntity<T extends AbstractJsonEntity<T>> implem
     }
 
     @Override
-    public void setParent(JsonEntity<? extends JsonEntity<?>> parent) {
+    public <V extends JsonEntity<V>> void setParent(JsonEntity<V> parent) {
 
-        if(!(parent instanceof AbstractJsonEntity<? extends AbstractJsonEntity<?>> abstractParent)){
-            throw new IllegalStateException("Parent must be an instance of AbstractJsonEntity");
-        }
+        if(!(parent instanceof AbstractJsonEntity<?> abstractJsonEntity))return;
+
         if(this.parent != null){
             throw new IllegalStateException("Parent already assigned");
         }
 
-        System.out.println("Parent of "+this+" is now "+parent.getJsonFile().getName());
+        System.out.println("Parent of "+this+" is now "+parent.getFileName());
 
-        this.parent = abstractParent;
+        this.parent = abstractJsonEntity;
     }
 
     @Override
@@ -58,12 +59,12 @@ public abstract class AbstractJsonEntity<T extends AbstractJsonEntity<T>> implem
     }
 
     @Override
-    public void setJsonFile(JsonFile<T> jsonFile) {
-        this.jsonFile = jsonFile;
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 
     @Override
-    public JsonFile<T> getJsonFile() {
-        return jsonFile;
+    public String getFileName() {
+        return fileName;
     }
 }
