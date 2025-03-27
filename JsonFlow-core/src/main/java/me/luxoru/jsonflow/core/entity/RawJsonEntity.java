@@ -1,6 +1,5 @@
 package me.luxoru.jsonflow.core.entity;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -17,7 +16,7 @@ import java.util.Map;
  */
 @JsonDeserialize(using = RawJsonEntityDeserializer.class)
 @RequiredArgsConstructor
-public final class RawJsonEntity extends AbstractJsonEntity<RawJsonEntity> implements PersistableEntity<RawJsonEntity> {
+public final class RawJsonEntity extends AbstractJsonEntity implements PersistableEntity {
 
     private final Map<String, JsonNode> pairs;
 
@@ -27,7 +26,6 @@ public final class RawJsonEntity extends AbstractJsonEntity<RawJsonEntity> imple
         for(Map.Entry<String, JsonNode> entry : pairs.entrySet()){
             node.set(entry.getKey(), entry.getValue());
         }
-
         return node;
     }
 

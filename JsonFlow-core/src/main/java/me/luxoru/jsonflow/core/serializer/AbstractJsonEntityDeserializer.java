@@ -16,7 +16,7 @@ import java.io.File;
 import java.io.IOException;
 
 @RequiredArgsConstructor
-public abstract class AbstractJsonEntityDeserializer<T extends AbstractJsonEntity<T>> extends JsonDeserializer<AbstractJsonEntity<T>> {
+public abstract class AbstractJsonEntityDeserializer<T extends AbstractJsonEntity> extends JsonDeserializer<AbstractJsonEntity> {
 
     protected static final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -27,7 +27,7 @@ public abstract class AbstractJsonEntityDeserializer<T extends AbstractJsonEntit
     }
 
     @Override
-    public final AbstractJsonEntity<T> deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+    public final AbstractJsonEntity deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
 
         ObjectNode node = p.getCodec().readTree(p);
         String parent = null;

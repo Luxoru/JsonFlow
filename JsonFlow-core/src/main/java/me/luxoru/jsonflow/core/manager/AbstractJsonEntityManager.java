@@ -14,7 +14,7 @@ import java.util.*;
 
 public class AbstractJsonEntityManager implements JsonEntityManager {
 
-    private final Map<String, JsonEntity<?>> jsonFileMap;
+    private final Map<String, JsonEntity> jsonFileMap;
 
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -35,30 +35,28 @@ public class AbstractJsonEntityManager implements JsonEntityManager {
     }
 
     @Override
-    public JsonEntity<?> getEntity(String name) {
+    public JsonEntity getEntity(String name) {
         return jsonFileMap.get(name);
     }
 
     @Override
-    public <T extends JsonEntity<T>> JsonEntity<T> getEntity(String name, Class<T> clazz) {
+    public <T extends JsonEntity> JsonEntity getEntity(String name, Class<T> clazz) {
         return clazz.cast(jsonFileMap.get(name));
     }
 
     @Override
-    public <T extends JsonEntity<T>> T readFile(File jsonFile, Class<T> jsonClazz) throws FileNotFoundException {
-
+    public <T extends JsonEntity> T readFile(File jsonFile, Class<T> jsonClazz) throws FileNotFoundException {
         return readFile(jsonFile, jsonClazz,true);
-
     }
 
     @Override
-    public <T extends JsonEntity<T>> T readFile(File file, Class<T> jsonClazz, boolean addFileToCache) throws FileNotFoundException {
+    public <T extends JsonEntity> T readFile(File file, Class<T> jsonClazz, boolean addFileToCache) throws FileNotFoundException {
         if(!file.exists()){
             throw new FileNotFoundException("File "+file.getName()+" doesnt exist!");
         }
 
         if(jsonFileMap.containsKey(file.getName())){
-            JsonEntity<?> jsonEntity = jsonFileMap.get(file.getName());
+            JsonEntity jsonEntity = jsonFileMap.get(file.getName());
             if(jsonClazz.isInstance(jsonEntity)){
                 return jsonClazz.cast(jsonEntity);
             }
@@ -69,17 +67,16 @@ public class AbstractJsonEntityManager implements JsonEntityManager {
 
             T jsonEntity = mapper.readValue(reader, jsonClazz);
 
-
             if(jsonEntity == null){
                 throw new IllegalStateException("SMT DEFO WRONG");
             }
 
             jsonEntity.setFileName(file.getName());
 
-
             if(addFileToCache){
                 jsonFileMap.put(jsonEntity.getFileName(), jsonEntity);
             }
+
             return jsonEntity;
 
         } catch (IOException e) {
@@ -88,10 +85,8 @@ public class AbstractJsonEntityManager implements JsonEntityManager {
         }
     }
 
-
-
     @Override
-    public Collection<JsonEntity<?>> getEntities() {
+    public Collection<JsonEntity> getEntities() {
         return jsonFileMap.values();
     }
 
@@ -101,7 +96,7 @@ public class AbstractJsonEntityManager implements JsonEntityManager {
     }
 
     @Override
-    public Map<String, JsonEntity<?>> getFileMap() {
+    public Map<String, JsonEntity> getFileMap() {
         return Map.copyOf(jsonFileMap);
     }
 }

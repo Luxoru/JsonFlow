@@ -9,12 +9,11 @@ import me.luxoru.jsonflow.api.entity.PersistableEntity;
 import me.luxoru.jsonflow.core.serializer.TestObjectDeserializer;
 
 import java.io.File;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Getter
 @JsonDeserialize(using = TestObjectDeserializer.class)
-public class Block extends AbstractJsonEntity<Block> implements PersistableEntity<Block> {
+public class Block extends AbstractJsonEntity implements PersistableEntity {
 
     private final String texture;
     public final int[][] positions;

@@ -22,15 +22,15 @@ public final class JsonFlow {
         initialized = true;
     }
 
-    public static JsonEntity<?> getEntity(String name){
+    public static JsonEntity getEntity(String name){
         return manager.getEntity(name);
     }
 
-    public static <T extends JsonEntity<T>> JsonEntity<T> getEntity(String name, Class<T> clazz){
+    public static <T extends JsonEntity> JsonEntity getEntity(String name, Class<T> clazz){
         return manager.getEntity(name, clazz);
     }
 
-    public static Collection<JsonEntity<?>> getEntities(){
+    public static Collection<JsonEntity> getEntities(){
         return manager.getEntities();
     }
 
@@ -38,7 +38,7 @@ public final class JsonFlow {
         return manager.getFileNames();
     }
 
-    public static Map<String, JsonEntity<?>> getFileMap(){
+    public static Map<String, JsonEntity> getFileMap(){
         return manager.getFileMap();
     }
 
@@ -50,11 +50,11 @@ public final class JsonFlow {
         return load(jsonFile, RawJsonEntity.class, addFileToCache);
     }
 
-    public static <T extends JsonEntity<T>> T load(File file, Class<T> clazz) {
+    public static <T extends JsonEntity> T load(File file, Class<T> clazz) {
         return load(file, clazz, false);
     }
 
-    public static <T extends JsonEntity<T>> T load(File jsonFile,Class<T> jsonClazz, boolean addFileToCache){
+    public static <T extends JsonEntity> T load(File jsonFile, Class<T> jsonClazz, boolean addFileToCache){
         if(!initialized){
             init();
         }
@@ -65,8 +65,5 @@ public final class JsonFlow {
             return null;
         }
     }
-
-
-
 
 }

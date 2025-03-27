@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import lombok.RequiredArgsConstructor;
 import me.luxoru.jsonflow.core.entity.RawJsonEntity;
 import me.luxoru.jsonflow.core.manager.AbstractJsonEntityManager;
 import me.luxoru.jsonflow.api.manager.JsonEntityManager;
@@ -16,6 +17,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+@RequiredArgsConstructor
 public class RawJsonEntityDeserializer extends JsonDeserializer<RawJsonEntity> {
 
     private final JsonEntityManager fileManager;
@@ -24,20 +26,15 @@ public class RawJsonEntityDeserializer extends JsonDeserializer<RawJsonEntity> {
         this.fileManager = new AbstractJsonEntityManager();
     }
 
-    public RawJsonEntityDeserializer(JsonEntityManager manager){
-        this.fileManager = manager;
-    }
 
     @Override
     public RawJsonEntity deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JacksonException {
-        System.out.println("RAW");
         ObjectNode node = p.getCodec().readTree(p);
 
         String parent = null;
 
         if(node.get("parent") != null){
             parent = node.get("parent").asText();
-            System.out.println("Fetching parent: "+parent);;
 
             if(!parent.endsWith(".json")){
                 parent += ".json";
@@ -49,8 +46,6 @@ public class RawJsonEntityDeserializer extends JsonDeserializer<RawJsonEntity> {
 
 
         }
-
-
 
         Map<String, JsonNode> pairs = new HashMap<>();
 
@@ -78,10 +73,6 @@ public class RawJsonEntityDeserializer extends JsonDeserializer<RawJsonEntity> {
         if(jsonEntity != null){
             entity.setParent(jsonEntity);
         }
-
-        System.out.println("BOOM: "+node);
-
-
 
         return entity;
 

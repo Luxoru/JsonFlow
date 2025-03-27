@@ -6,13 +6,12 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import me.luxoru.jsonflow.api.entity.JsonEntity;
-import me.luxoru.jsonflow.api.entity.PersistableEntity;
 import me.luxoru.jsonflow.core.serializer.AbstractJsonEntityDeserializer;
 
 @JsonDeserialize(using = AbstractJsonEntityDeserializer.class)
-public abstract class AbstractJsonEntity<T extends AbstractJsonEntity<T>> implements JsonEntity<T> {
+public abstract class AbstractJsonEntity implements JsonEntity {
 
-    private AbstractJsonEntity<?> parent;
+    private AbstractJsonEntity parent;
     private String fileName;
 
 
@@ -40,21 +39,21 @@ public abstract class AbstractJsonEntity<T extends AbstractJsonEntity<T>> implem
     }
 
     @Override
-    public <V extends JsonEntity<V>> void setParent(JsonEntity<V> parent) {
+    public void setParent(JsonEntity parent) {
 
-        if(!(parent instanceof AbstractJsonEntity<?> abstractJsonEntity))return;
+        if(!(parent instanceof AbstractJsonEntity abstractJsonEntity)){
+            throw new IllegalStateException("Parent must be instance of AbstractJsonEntity");
+        }
 
         if(this.parent != null){
             throw new IllegalStateException("Parent already assigned");
         }
 
-        System.out.println("Parent of "+this+" is now "+parent.getFileName());
-
         this.parent = abstractJsonEntity;
     }
 
     @Override
-    public AbstractJsonEntity<?> getParent() {
+    public AbstractJsonEntity getParent() {
         return this.parent;
     }
 

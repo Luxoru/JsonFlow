@@ -5,10 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.SneakyThrows;
-import me.luxoru.jsonflow.core.entity.AbstractJsonEntity;
 import me.luxoru.jsonflow.core.entity.Block;
-
-import java.util.List;
 
 public class TestObjectDeserializer extends AbstractJsonEntityDeserializer<Block>{
     @SneakyThrows

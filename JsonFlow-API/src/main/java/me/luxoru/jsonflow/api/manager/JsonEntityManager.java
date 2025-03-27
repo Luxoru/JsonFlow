@@ -11,24 +11,22 @@ import java.util.Set;
 
 public interface JsonEntityManager {
 
+    <T extends JsonEntity> T readFile(File jsonFile, Class<T> jsonClazz) throws FileNotFoundException;
 
+    <T extends JsonEntity> T readFile(File jsonFile, Class<T> jsonClazz, boolean addFileToCache) throws FileNotFoundException;
 
-    <T extends JsonEntity<T>> T readFile(File jsonFile, Class<T> jsonClazz) throws FileNotFoundException;
+    <T extends JsonEntity> T readFileRaw(File jsonFile) throws FileNotFoundException;
 
-    <T extends JsonEntity<T>> T readFile(File jsonFile,Class<T> jsonClazz, boolean addFileToCache) throws FileNotFoundException;
+    <T extends JsonEntity> T readFileRaw(File jsonFile, boolean addFileToCache) throws FileNotFoundException;
 
-    <T extends JsonEntity<T>> T readFileRaw(File jsonFile) throws FileNotFoundException;
+    JsonEntity getEntity(String name);
 
-    <T extends JsonEntity<T>> T readFileRaw(File jsonFile, boolean addFileToCache) throws FileNotFoundException;
+    <T extends JsonEntity> JsonEntity getEntity(String name, Class<T> clazz);
 
-    JsonEntity<?> getEntity(String name);
-
-    <T extends JsonEntity<T>> JsonEntity<T> getEntity(String name, Class<T> clazz);
-
-    Collection<JsonEntity<?>> getEntities();
+    Collection<JsonEntity> getEntities();
 
     Set<String> getFileNames();
 
-    Map<String, JsonEntity<?>> getFileMap();
+    Map<String, JsonEntity> getFileMap();
 
 }
