@@ -11,7 +11,7 @@ public abstract class AbstractEntity extends AbstractJsonEntity implements Entit
     private final String name;
     private final int width;
     private final int height;
-    private final int maxHealth;
+    private final float maxHealth;
 
     @Override
     public String getName() {
@@ -29,13 +29,13 @@ public abstract class AbstractEntity extends AbstractJsonEntity implements Entit
     }
 
     @Override
-    public int getMaxHealth() {
+    public float getMaxHealth() {
         return maxHealth;
     }
 
 
     @Override
-    protected ObjectNode thisToJsonObject() throws JsonProcessingException {
+    protected ObjectNode thisToJsonObject() {
         ObjectNode node = objectMapper.createObjectNode();
         node.put("name", name);
         node.put("width", width);

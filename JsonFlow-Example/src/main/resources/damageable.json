@@ -1,4 +1,6 @@
 {
-  "parent": "src/main/resources/entity",
-  "maxHealth": 0.0
+  "parent": "entity",
+  "health": 10.0,
+  "maxHealth": 0.0,
+  "invulnerable": false
 }

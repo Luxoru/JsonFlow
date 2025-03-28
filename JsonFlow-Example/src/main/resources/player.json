@@ -1,3 +1,7 @@
 {
-  "parent": "src/main/resources/damageable.json"
+  "parent": "damageable.json",
+  "name": "Player",
+  "width": 2,
+  "height": 5,
+  "maxHealth": 20
 }

@@ -8,7 +8,7 @@ public interface Entity {
 
     int getHeight();
 
-    int getMaxHealth();
+    float getMaxHealth();
 
 
 }
