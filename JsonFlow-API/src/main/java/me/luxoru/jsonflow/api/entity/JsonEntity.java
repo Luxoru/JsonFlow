@@ -15,6 +15,6 @@ public interface JsonEntity {
 
     void setFileName(String fileName);
 
-    ObjectNode toJsonObject() throws JsonProcessingException;
+    ObjectNode toJsonObject();
 
 }
