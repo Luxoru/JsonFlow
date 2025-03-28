@@ -51,7 +51,7 @@ public final class JsonFlow {
     }
 
     public static <T extends JsonEntity> T load(File file, Class<T> clazz) {
-        return load(file, clazz, false);
+        return load(file, clazz, true);
     }
 
     public static <T extends JsonEntity> T load(File jsonFile, Class<T> jsonClazz, boolean addFileToCache){
