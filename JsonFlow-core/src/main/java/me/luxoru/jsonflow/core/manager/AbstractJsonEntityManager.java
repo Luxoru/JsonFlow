@@ -23,18 +23,6 @@ public class AbstractJsonEntityManager implements JsonEntityManager {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public RawJsonEntity readFileRaw(File jsonFile) throws FileNotFoundException {
-        return readFile(jsonFile, RawJsonEntity.class);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public RawJsonEntity readFileRaw(File jsonFile, boolean addFileToCache) throws FileNotFoundException {
-        return null;
-    }
-
-    @Override
     public JsonEntity getEntity(String name) {
         return jsonFileMap.get(name);
     }
@@ -52,7 +40,7 @@ public class AbstractJsonEntityManager implements JsonEntityManager {
     @Override
     public <T extends JsonEntity> T readFile(File file, Class<T> jsonClazz, boolean addFileToCache) throws FileNotFoundException {
         if(!file.exists()){
-            throw new FileNotFoundException("File "+file.getName()+" doesnt exist!");
+            throw new FileNotFoundException("File "+file.getAbsoluteFile()+" doesnt exist!");
         }
 
         if(jsonFileMap.containsKey(file.getName())){

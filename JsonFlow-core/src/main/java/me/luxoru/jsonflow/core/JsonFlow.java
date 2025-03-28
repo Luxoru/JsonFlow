@@ -61,6 +61,7 @@ public final class JsonFlow {
         try {
             return manager.readFile(jsonFile, jsonClazz,addFileToCache);
         } catch (FileNotFoundException e) {
+            e.printStackTrace();
             System.out.println("Error occurred loading file");
             return null;
         }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import me.luxoru.jsonflow.api.entity.PersistableEntity;
 import me.luxoru.jsonflow.core.serializer.RawJsonEntityDeserializer;
 
@@ -29,6 +30,7 @@ public final class RawJsonEntity extends AbstractJsonEntity implements Persistab
         return node;
     }
 
+    @SneakyThrows
     @Override
     public File save(File fileToSave) {
         return null;

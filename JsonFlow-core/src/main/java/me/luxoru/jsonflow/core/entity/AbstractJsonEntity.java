@@ -25,7 +25,7 @@ public abstract class AbstractJsonEntity implements JsonEntity {
      */
     protected abstract ObjectNode thisToJsonObject() throws JsonProcessingException;
 
-
+    @Override
     public ObjectNode toJsonObject() throws JsonProcessingException{
         ObjectNode node = objectMapper.createObjectNode();
         if(this.parent != null){
