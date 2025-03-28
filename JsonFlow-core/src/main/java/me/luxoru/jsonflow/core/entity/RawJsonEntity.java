@@ -10,6 +10,7 @@ import me.luxoru.jsonflow.api.entity.PersistableEntity;
 import me.luxoru.jsonflow.core.serializer.RawJsonEntityDeserializer;
 
 import java.io.File;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -19,9 +20,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 public final class RawJsonEntity extends AbstractJsonEntity implements PersistableEntity {
 
-    private final Map<String, JsonNode> pairs;
+    private final LinkedHashMap<String, JsonNode> pairs;
 
     @Override
+
     protected ObjectNode thisToJsonObject() {
         ObjectNode node = objectMapper.createObjectNode();
         for(Map.Entry<String, JsonNode> entry : pairs.entrySet()){

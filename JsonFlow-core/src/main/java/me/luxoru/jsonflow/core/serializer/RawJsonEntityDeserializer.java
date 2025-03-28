@@ -13,8 +13,12 @@ import me.luxoru.jsonflow.api.manager.JsonEntityManager;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -42,12 +46,20 @@ public class RawJsonEntityDeserializer extends JsonDeserializer<RawJsonEntity> {
         }
         RawJsonEntity jsonEntity = null;
         if(parent != null){
-            jsonEntity = fileManager.readFile(new File(parent), RawJsonEntity.class);
+            URL url = AbstractJsonEntityDeserializer.class.getClassLoader().getResource(parent);
+
+            if(url != null){
+
+                try {
+                    jsonEntity = fileManager.readFile(Paths.get(url.toURI()).toFile(), RawJsonEntity.class);
+                } catch (URISyntaxException _) {
+                }
+            }
 
 
         }
 
-        Map<String, JsonNode> pairs = new HashMap<>();
+        LinkedHashMap<String, JsonNode> pairs = new LinkedHashMap<>();
 
         for (Iterator<Map.Entry<String, JsonNode>> it = node.fields(); it.hasNext(); ) {
             Map.Entry<String, JsonNode> entry = it.next();
