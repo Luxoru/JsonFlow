@@ -44,7 +44,6 @@ public abstract class AbstractJsonEntity implements JsonEntity {
             node.remove("parent");
         }
         if(!this.getClass().isAnnotationPresent(FlowSerializable.class)){
-            System.out.println(this.getClass());
             node.setAll(thisToJsonObject());
             return node;
         }
