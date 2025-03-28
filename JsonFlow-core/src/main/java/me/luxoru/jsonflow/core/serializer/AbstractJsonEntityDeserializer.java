@@ -3,18 +3,14 @@ package me.luxoru.jsonflow.core.serializer;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.RequiredArgsConstructor;
+import me.luxoru.jsonflow.core.JsonFlow;
 import me.luxoru.jsonflow.core.entity.AbstractJsonEntity;
 
 import me.luxoru.jsonflow.core.entity.RawJsonEntity;
-import me.luxoru.jsonflow.core.manager.AbstractJsonEntityManager;
-import me.luxoru.jsonflow.api.manager.JsonEntityManager;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
@@ -22,13 +18,6 @@ import java.nio.file.Paths;
 @RequiredArgsConstructor
 public abstract class AbstractJsonEntityDeserializer<T extends AbstractJsonEntity> extends JsonDeserializer<AbstractJsonEntity> {
 
-    protected static final ObjectMapper objectMapper = new ObjectMapper();
-
-    private final JsonEntityManager fileManager;
-
-    public AbstractJsonEntityDeserializer(){
-        this.fileManager = new AbstractJsonEntityManager();
-    }
 
     @Override
     public final AbstractJsonEntity deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
@@ -50,7 +39,7 @@ public abstract class AbstractJsonEntityDeserializer<T extends AbstractJsonEntit
             if(url != null){
 
                 try {
-                    jsonEntity = fileManager.readFile(Paths.get(url.toURI()).toFile(), RawJsonEntity.class);
+                    jsonEntity = JsonFlow.load(Paths.get(url.toURI()).toFile(), RawJsonEntity.class);
                 } catch (URISyntaxException _) {
                 }
             }
