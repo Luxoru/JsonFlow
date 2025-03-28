@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.RequiredArgsConstructor;
+import me.luxoru.jsonflow.core.JsonFlow;
 import me.luxoru.jsonflow.core.entity.RawJsonEntity;
 import me.luxoru.jsonflow.core.manager.AbstractJsonEntityManager;
 import me.luxoru.jsonflow.api.manager.JsonEntityManager;
@@ -23,12 +24,6 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 public class RawJsonEntityDeserializer extends JsonDeserializer<RawJsonEntity> {
-
-    private final JsonEntityManager fileManager;
-
-    public RawJsonEntityDeserializer(){
-        this.fileManager = new AbstractJsonEntityManager();
-    }
 
 
     @Override
@@ -51,7 +46,7 @@ public class RawJsonEntityDeserializer extends JsonDeserializer<RawJsonEntity> {
             if(url != null){
 
                 try {
-                    jsonEntity = fileManager.readFile(Paths.get(url.toURI()).toFile(), RawJsonEntity.class);
+                    jsonEntity = JsonFlow.load(Paths.get(url.toURI()).toFile(), RawJsonEntity.class);
                 } catch (URISyntaxException _) {
                 }
             }
