@@ -5,8 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import me.luxoru.jsonflow.api.annotation.FlowField;
+import me.luxoru.jsonflow.api.annotation.FlowSerializable;
 import me.luxoru.jsonflow.api.entity.JsonEntity;
 import me.luxoru.jsonflow.core.serializer.AbstractJsonEntityDeserializer;
+import me.luxoru.jsonflow.core.util.ReflectionUtilities;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 @JsonDeserialize(using = AbstractJsonEntityDeserializer.class)
 public abstract class AbstractJsonEntity implements JsonEntity {
@@ -23,17 +29,32 @@ public abstract class AbstractJsonEntity implements JsonEntity {
      * Converts all the fields for this JsonEntity to a jsonObject
      * @return JsonObject for this object
      */
-    protected abstract ObjectNode thisToJsonObject() throws JsonProcessingException;
+    protected ObjectNode thisToJsonObject(){return objectMapper.createObjectNode();};
 
     @Override
-    public ObjectNode toJsonObject() throws JsonProcessingException{
+    public ObjectNode toJsonObject(){
+
         ObjectNode node = objectMapper.createObjectNode();
         if(this.parent != null){
             node.setAll(this.parent.toJsonObject());
             node.remove("type");
             node.remove("parent");
         }
-        node.setAll(thisToJsonObject());
+        if(!this.getClass().isAnnotationPresent(FlowSerializable.class)){
+            System.out.println(this.getClass());
+            node.setAll(thisToJsonObject());
+            return node;
+        }
+
+        for (Field field : this.getClass().getDeclaredFields()) {
+            if(!field.isAnnotationPresent(FlowField.class))continue;
+            FlowField flowField = field.getAnnotation(FlowField.class);
+            Object value = ReflectionUtilities.getField(this, field.getName(), field.getType());
+            if(value == null)continue;
+            node.put(flowField.fieldName(), value.toString());
+        }
+
+
         return node;
 
     }
