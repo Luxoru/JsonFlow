@@ -28,7 +28,7 @@ public class AbstractJsonEntityManager implements JsonEntityManager {
     }
 
     @Override
-    public <T extends JsonEntity> JsonEntity getEntity(String name, Class<T> clazz) {
+    public <T extends JsonEntity> T getEntity(String name, Class<T> clazz) {
         return clazz.cast(jsonFileMap.get(name));
     }
 

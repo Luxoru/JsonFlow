@@ -26,8 +26,8 @@ public final class JsonFlow {
         return manager.getEntity(name);
     }
 
-    public static <T extends JsonEntity> JsonEntity getEntity(String name, Class<T> clazz){
-        return manager.getEntity(name, clazz);
+    public static <T extends JsonEntity> T getEntity(String name, Class<T> clazz){
+        return (T) manager.getEntity(name, clazz);
     }
 
     public static Collection<JsonEntity> getEntities(){

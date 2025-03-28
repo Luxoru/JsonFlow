@@ -17,7 +17,7 @@ public interface JsonEntityManager {
 
     JsonEntity getEntity(String name);
 
-    <T extends JsonEntity> JsonEntity getEntity(String name, Class<T> clazz);
+    <T extends JsonEntity> T getEntity(String name, Class<T> clazz);
 
     Collection<JsonEntity> getEntities();
 
