@@ -1,8 +1,10 @@
 package me.luxoru.example.util;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import me.luxoru.jsonflow.core.serializer.node.AbstractJsonFlowDeserializer;
 
 @AllArgsConstructor
 @Getter
@@ -20,4 +22,12 @@ public final class Position {
         this.y += y;
         return this;
     }
+
+
+
+
+
 }
+
+
+
