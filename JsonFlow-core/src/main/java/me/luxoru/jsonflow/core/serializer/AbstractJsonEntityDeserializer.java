@@ -14,6 +14,10 @@ import me.luxoru.jsonflow.api.manager.JsonEntityManager;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Paths;
 
 @RequiredArgsConstructor
 public abstract class AbstractJsonEntityDeserializer<T extends AbstractJsonEntity> extends JsonDeserializer<AbstractJsonEntity> {
@@ -41,7 +45,17 @@ public abstract class AbstractJsonEntityDeserializer<T extends AbstractJsonEntit
 
         RawJsonEntity jsonEntity = null;
         if(parent != null){
-            jsonEntity = fileManager.readFile(new File(parent), RawJsonEntity.class);
+            URL url = AbstractJsonEntityDeserializer.class.getClassLoader().getResource(parent);
+
+            if(url != null){
+
+                try {
+                    jsonEntity = fileManager.readFile(Paths.get(url.toURI()).toFile(), RawJsonEntity.class);
+                } catch (URISyntaxException _) {
+                }
+            }
+
+
         }
 
         //Squash tree
