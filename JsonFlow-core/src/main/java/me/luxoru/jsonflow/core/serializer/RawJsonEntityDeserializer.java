@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.RequiredArgsConstructor;
+import me.luxoru.jsonflow.api.entity.JsonEntity;
 import me.luxoru.jsonflow.core.JsonFlow;
 import me.luxoru.jsonflow.core.entity.RawJsonEntity;
 import me.luxoru.jsonflow.core.manager.AbstractJsonEntityManager;
@@ -23,36 +24,14 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RequiredArgsConstructor
-public class RawJsonEntityDeserializer extends JsonDeserializer<RawJsonEntity> {
+public class RawJsonEntityDeserializer extends EntityDeserializer<RawJsonEntity> {
 
 
     @Override
     public RawJsonEntity deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JacksonException {
         ObjectNode node = p.getCodec().readTree(p);
 
-        String parent = null;
-
-        if(node.get("parent") != null){
-            parent = node.get("parent").asText();
-
-            if(!parent.endsWith(".json")){
-                parent += ".json";
-            }
-        }
-        RawJsonEntity jsonEntity = null;
-        if(parent != null){
-            URL url = AbstractJsonEntityDeserializer.class.getClassLoader().getResource(parent);
-
-            if(url != null){
-
-                try {
-                    jsonEntity = JsonFlow.load(Paths.get(url.toURI()).toFile(), RawJsonEntity.class);
-                } catch (URISyntaxException _) {
-                }
-            }
-
-
-        }
+        JsonEntity jsonEntity = mergeWithParentJson(node);
 
         LinkedHashMap<String, JsonNode> pairs = new LinkedHashMap<>();
 
@@ -63,19 +42,6 @@ public class RawJsonEntityDeserializer extends JsonDeserializer<RawJsonEntity> {
             pairs.put(key,  value);
         }
         RawJsonEntity entity = new RawJsonEntity(pairs);
-
-        //Squash tree
-        if(jsonEntity != null){
-            ObjectNode jsonObject = jsonEntity.toJsonObject();
-            jsonObject.fields().forEachRemaining(entry ->{
-                if(!node.has(entry.getKey())){
-                    node.set(entry.getKey(), entry.getValue());
-                }
-            });
-            node.remove("parent");
-            node.remove("type");
-
-        }
 
         if(jsonEntity != null){
             entity.setParent(jsonEntity);
