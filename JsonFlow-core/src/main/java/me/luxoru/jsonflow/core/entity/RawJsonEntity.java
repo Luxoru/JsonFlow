@@ -23,7 +23,6 @@ public final class RawJsonEntity extends AbstractJsonEntity implements Persistab
     private final LinkedHashMap<String, JsonNode> pairs;
 
     @Override
-
     protected ObjectNode thisToJsonObject() {
         ObjectNode node = objectMapper.createObjectNode();
         for(Map.Entry<String, JsonNode> entry : pairs.entrySet()){
