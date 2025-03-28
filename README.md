@@ -13,7 +13,8 @@
 public class Example{
     public void loadJson(){
         Block block = JsonFlow.load("grass_block.json", Block.class);
-        System.out.println(block.getMaterial());
+        System.out.println(block.getMaterial()); //Grass
+        System.out.println(block.isOpaque()); //False
     }
 }
 ```
