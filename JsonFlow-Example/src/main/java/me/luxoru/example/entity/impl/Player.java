@@ -30,4 +30,9 @@ public class Player extends AbstractEntity {
     public void damage(float damage){
         currentHealth -= damage;
     }
+
+    public void move(float dx, float dy){
+        this.position.moveX(dx);
+        this.position.moveY(dy);
+    }
 }

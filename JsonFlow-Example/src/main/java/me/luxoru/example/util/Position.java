@@ -13,13 +13,13 @@ public final class Position {
     private float x;
     private float y;
 
-    public Position moveX(final int xIncrement){
-        this.x += x;
+    public Position moveX(final float xIncrement){
+        this.x += xIncrement;
         return this;
     }
 
-    public Position moveY(final int yIncrement){
-        this.y += y;
+    public Position moveY(final float yIncrement){
+        this.y += yIncrement;
         return this;
     }
 
