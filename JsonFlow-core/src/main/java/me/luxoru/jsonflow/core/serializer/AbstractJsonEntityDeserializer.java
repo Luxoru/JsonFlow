@@ -22,7 +22,7 @@ import java.nio.file.Paths;
 @RequiredArgsConstructor
 public abstract class AbstractJsonEntityDeserializer<T extends AbstractJsonEntity> extends JsonDeserializer<AbstractJsonEntity> {
 
-    static final ObjectMapper objectMapper = new ObjectMapper();
+    protected static final ObjectMapper objectMapper = new ObjectMapper();
 
     private final JsonEntityManager fileManager;
 
