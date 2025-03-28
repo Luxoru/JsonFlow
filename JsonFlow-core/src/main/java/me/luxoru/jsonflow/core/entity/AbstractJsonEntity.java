@@ -22,7 +22,7 @@ public abstract class AbstractJsonEntity implements JsonEntity {
 
     private AbstractJsonEntity parent;
     private String fileName;
-
+    private ObjectNode jsonObject;
 
     protected final ObjectMapper objectMapper = new ObjectMapper()
             .enable(SerializationFeature.INDENT_OUTPUT);
@@ -32,20 +32,20 @@ public abstract class AbstractJsonEntity implements JsonEntity {
      * Converts all the fields for this JsonEntity to a jsonObject
      * @return JsonObject for this object
      */
-    protected ObjectNode thisToJsonObject(){return objectMapper.createObjectNode();};
+    protected ObjectNode thisToJsonObject(){return null;};
 
     @Override
     public ObjectNode toJsonObject(){
 
-        ObjectNode node = objectMapper.createObjectNode();
+        this.jsonObject = objectMapper.createObjectNode();
         if(this.parent != null){
-            node.setAll(this.parent.toJsonObject());
-            node.remove("type");
-            node.remove("parent");
+            this.jsonObject.setAll(this.parent.toJsonObject());
+            this.jsonObject.remove("type");
+            this.jsonObject.remove("parent");
         }
         if(!this.getClass().isAnnotationPresent(FlowSerializable.class)){
-            node.setAll(thisToJsonObject());
-            return node;
+            this.jsonObject.setAll(thisToJsonObject());
+            return this.jsonObject;
         }
 
         List<Field> allFields = ReflectionUtilities.getAllFields(this.getClass());
@@ -56,7 +56,7 @@ public abstract class AbstractJsonEntity implements JsonEntity {
             Object value = ReflectionUtilities.getField(this, field.getName(), field.getType());
 
             if(value == null){
-                node.put(flowField.fieldName(), "");
+                this.jsonObject.put(flowField.fieldName(), "");
                 continue;
             }
             Class<? extends JsonFlowDeserializer> serializer = flowField.serializer();
@@ -66,22 +66,22 @@ public abstract class AbstractJsonEntity implements JsonEntity {
                 if (field.getType().isPrimitive() || ReflectionUtilities.isWrapperType(field.getType())) {
 
                     switch (value) {
-                        case Integer number -> node.put(flowField.fieldName(), number);
-                        case Double number -> node.put(flowField.fieldName(), number);
-                        case Float number -> node.put(flowField.fieldName(), number);
-                        case Boolean b -> node.put(flowField.fieldName(), b);
+                        case Integer number -> this.jsonObject.put(flowField.fieldName(), number);
+                        case Double number -> this.jsonObject.put(flowField.fieldName(), number);
+                        case Float number -> this.jsonObject.put(flowField.fieldName(), number);
+                        case Boolean b -> this.jsonObject.put(flowField.fieldName(), b);
                         default -> {
                             System.out.printf("Unexpected primitive type (%s). Handling as string\n".formatted(field.getType()));
-                            node.put(flowField.fieldName(), value.toString());
+                            this.jsonObject.put(flowField.fieldName(), value.toString());
                         }
                     }
                 }
                 else if(field.getType().equals(String.class)){
-                    node.put(flowField.fieldName(), value.toString());
+                    this.jsonObject.put(flowField.fieldName(), value.toString());
                 }
                 else {
                     System.out.printf("Unknown type handled (%s). Does it need a custom handler? Handling as string\n".formatted(field.getType()));
-                    node.put(flowField.fieldName(), value.toString());
+                    this.jsonObject.put(flowField.fieldName(), value.toString());
                 }
 
                 continue;
@@ -89,12 +89,11 @@ public abstract class AbstractJsonEntity implements JsonEntity {
 
             JsonFlowDeserializer instance = ReflectionUtilities.createInstance(serializer);
             ObjectNode deserialize = instance.deserialize(value);
-            node.set(flowField.fieldName(), deserialize);
+            this.jsonObject.set(flowField.fieldName(), deserialize);
 
         }
 
-
-        return node;
+        return this.jsonObject;
 
     }
 
