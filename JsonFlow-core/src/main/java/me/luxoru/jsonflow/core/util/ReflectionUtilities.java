@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class ReflectionUtilities {
 
@@ -93,9 +94,8 @@ public class ReflectionUtilities {
             constructor.setAccessible(true);
             return constructor.newInstance(params);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            // Provide better debugging information
-            throw new RuntimeException(
-                    "Unable to create instance for %s with params %s".formatted(clazz, Arrays.toString(params)), e);
+            e.printStackTrace();
+            return null;
         }
     }
 

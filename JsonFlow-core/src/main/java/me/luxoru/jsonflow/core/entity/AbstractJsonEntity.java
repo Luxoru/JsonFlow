@@ -88,6 +88,7 @@ public abstract class AbstractJsonEntity implements JsonEntity {
             }
 
             JsonFlowDeserializer instance = ReflectionUtilities.createInstance(serializer);
+            if(instance == null)return null;
             ObjectNode deserialize = instance.deserialize(value);
             this.jsonObject.set(flowField.fieldName(), deserialize);
 
