@@ -16,9 +16,4 @@ public class PlayerDeserializer extends EntityDeserializer<Player> {
 
         return new Player(name, width, height, maxHealth, node.get("health").floatValue(), new Position(x,y));
     }
-
-    @Override
-    protected Class<Player> getEntityClass() {
-        return Player.class;
-    }
 }
