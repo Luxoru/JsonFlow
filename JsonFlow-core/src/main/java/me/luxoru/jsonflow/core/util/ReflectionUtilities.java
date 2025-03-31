@@ -105,6 +105,20 @@ public class ReflectionUtilities {
                 clazz == Boolean.class || clazz == Character.class;
     }
 
+    public static List<Field> getAllFields(Class<?> clazz, Class<?> ignore){
+        List<Field> allFields = new ArrayList<>();
+        while (clazz != null) {
+            if(clazz.equals(ignore)) {
+                clazz = clazz.getSuperclass();
+                continue;
+            }
+            Field[] declaredFields = clazz.getDeclaredFields();
+            allFields.addAll(Arrays.asList(declaredFields));
+            clazz = clazz.getSuperclass();
+        }
+
+        return allFields;
+    }
 
     public static List<Field> getAllFields(Class<?> clazz){
         List<Field> allFields = new ArrayList<>();
