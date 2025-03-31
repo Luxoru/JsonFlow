@@ -28,6 +28,7 @@ public class EntityExample {
         System.out.println(player.toJsonObject().toPrettyString());
 
         player.move(2,2);
+        player.damage(7);
 
         System.out.println(player.toJsonObject().toPrettyString());
 

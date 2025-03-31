@@ -7,13 +7,12 @@ import me.luxoru.jsonflow.core.entity.AbstractJsonEntity;
 @RequiredArgsConstructor
 public abstract class AbstractEntity extends AbstractJsonEntity implements Entity {
 
-    @FlowField(fieldName = "name")
     private final String name;
-    @FlowField(fieldName = "width")
+
     private final int width;
-    @FlowField(fieldName = "height")
+
     private final int height;
-    @FlowField(fieldName = "maxHealth")
+
     private final float maxHealth;
 
     @Override
