@@ -1,6 +1,5 @@
 package me.luxoru.jsonflow.core.entity;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -8,12 +7,12 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import me.luxoru.jsonflow.api.annotation.FlowField;
 import me.luxoru.jsonflow.api.annotation.FlowSerializable;
 import me.luxoru.jsonflow.api.entity.JsonEntity;
-import me.luxoru.jsonflow.api.serialize.JsonFlowDeserializer;
+import me.luxoru.jsonflow.api.serialize.JsonFlowConversionHandler;
 import me.luxoru.jsonflow.core.serializer.AbstractJsonEntityDeserializer;
+import me.luxoru.jsonflow.core.serializer.JsonConverter;
 import me.luxoru.jsonflow.core.util.ReflectionUtilities;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.List;
 
 
@@ -32,7 +31,7 @@ public abstract class AbstractJsonEntity implements JsonEntity {
      * Converts all the fields for this JsonEntity to a jsonObject
      * @return JsonObject for this object
      */
-    protected ObjectNode thisToJsonObject(){return null;};
+    protected ObjectNode thisToJsonObject(){return objectMapper.createObjectNode();};
 
     @Override
     public ObjectNode toJsonObject(){
@@ -48,49 +47,63 @@ public abstract class AbstractJsonEntity implements JsonEntity {
             return this.jsonObject;
         }
 
-        List<Field> allFields = ReflectionUtilities.getAllFields(this.getClass());
+        List<Field> allFields = ReflectionUtilities.getAllFields(this.getClass(), AbstractJsonEntity.class);
 
         for (Field field : allFields) {
-            if(!field.isAnnotationPresent(FlowField.class))continue;
+            
             FlowField flowField = field.getAnnotation(FlowField.class);
+            String fieldName = null;
+            if(flowField == null){
+                fieldName = field.getName();
+            }
+            else{
+                fieldName = flowField.value();
+            }
+
             Object value = ReflectionUtilities.getField(this, field.getName(), field.getType());
 
             if(value == null){
-                this.jsonObject.put(flowField.fieldName(), "");
+                this.jsonObject.put(fieldName, "");
                 continue;
             }
-            Class<? extends JsonFlowDeserializer> serializer = flowField.serializer();
+            Class<? extends JsonFlowConversionHandler> serializer = flowField == null ? JsonFlowConversionHandler.class : flowField.serializer();
 
-            if (serializer.equals(JsonFlowDeserializer.class)) {
+            if (serializer.equals(JsonFlowConversionHandler.class)) {
 
                 if (field.getType().isPrimitive() || ReflectionUtilities.isWrapperType(field.getType())) {
 
                     switch (value) {
-                        case Integer number -> this.jsonObject.put(flowField.fieldName(), number);
-                        case Double number -> this.jsonObject.put(flowField.fieldName(), number);
-                        case Float number -> this.jsonObject.put(flowField.fieldName(), number);
-                        case Boolean b -> this.jsonObject.put(flowField.fieldName(), b);
+                        case Integer number -> this.jsonObject.put(fieldName, number);
+                        case Double number -> this.jsonObject.put(fieldName, number);
+                        case Float number -> this.jsonObject.put(fieldName, number);
+                        case Boolean b -> this.jsonObject.put(fieldName, b);
                         default -> {
                             System.out.printf("Unexpected primitive type (%s). Handling as string\n".formatted(field.getType()));
-                            this.jsonObject.put(flowField.fieldName(), value.toString());
+                            this.jsonObject.put(fieldName, value.toString());
                         }
                     }
                 }
                 else if(field.getType().equals(String.class)){
-                    this.jsonObject.put(flowField.fieldName(), value.toString());
+                    this.jsonObject.put(fieldName, value.toString());
                 }
                 else {
-                    System.out.printf("Unknown type handled (%s). Does it need a custom handler? Handling as string\n".formatted(field.getType()));
-                    this.jsonObject.put(flowField.fieldName(), value.toString());
+                    ObjectNode deserialize = JsonConverter.deserialize(value, value.getClass());
+                    if(deserialize == null){
+                        System.out.printf("Unknown type handled (%s). Does it need a custom handler? Handling as string\n".formatted(field.getType()));
+                        this.jsonObject.put(fieldName, value.toString());
+                    }
+                    else{
+                        this.jsonObject.set(fieldName, deserialize);
+                    }
+
                 }
 
                 continue;
             }
 
-            JsonFlowDeserializer instance = ReflectionUtilities.createInstance(serializer);
-            if(instance == null)return null;
-            ObjectNode deserialize = instance.deserialize(value);
-            this.jsonObject.set(flowField.fieldName(), deserialize);
+            ObjectNode deserialize = JsonConverter.deserialize(value, value.getClass(), serializer);
+            if(deserialize == null)return null;
+            this.jsonObject.set(fieldName, deserialize);
 
         }
 
