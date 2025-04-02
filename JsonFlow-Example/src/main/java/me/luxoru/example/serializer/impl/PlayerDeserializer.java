@@ -14,6 +14,6 @@ public class PlayerDeserializer extends EntityDeserializer<Player> {
         int x = jsonNode.get("x").asInt();
         int y = jsonNode.get("y").asInt();
 
-        return new Player(name, width, height, maxHealth, node.get("health").floatValue(), new Position(x,y));
+        return null;
     }
 }
