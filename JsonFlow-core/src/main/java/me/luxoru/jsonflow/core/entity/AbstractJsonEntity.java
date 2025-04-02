@@ -13,13 +13,16 @@ import me.luxoru.jsonflow.core.serializer.JsonConverter;
 import me.luxoru.jsonflow.core.util.ReflectionUtilities;
 
 import java.lang.reflect.Field;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @JsonDeserialize(using = AbstractJsonEntityDeserializer.class)
 public abstract class AbstractJsonEntity implements JsonEntity {
 
-    private AbstractJsonEntity parent;
+    private Set<AbstractJsonEntity> parents;
     private String fileName;
     private ObjectNode jsonObject;
 
@@ -37,8 +40,11 @@ public abstract class AbstractJsonEntity implements JsonEntity {
     public ObjectNode toJsonObject(){
 
         this.jsonObject = objectMapper.createObjectNode();
-        if(this.parent != null){
-            this.jsonObject.setAll(this.parent.toJsonObject());
+        if(this.parents != null){
+            for (AbstractJsonEntity parent : this.getParents()) {
+                this.jsonObject.setAll(parent.toJsonObject());
+            }
+
             this.jsonObject.remove("type");
             this.jsonObject.remove("parent");
         }
@@ -63,7 +69,7 @@ public abstract class AbstractJsonEntity implements JsonEntity {
             Object value = ReflectionUtilities.getField(this, field.getName(), field.getType());
 
             if(value == null){
-                this.jsonObject.put(fieldName, "");
+                this.jsonObject.putNull(fieldName);
                 continue;
             }
             Class<? extends JsonFlowConversionHandler> serializer = flowField == null ? JsonFlowConversionHandler.class : flowField.serializer();
@@ -112,22 +118,29 @@ public abstract class AbstractJsonEntity implements JsonEntity {
     }
 
     @Override
-    public void setParent(JsonEntity parent) {
+    public void addParent(JsonEntity parent) {
 
         if(!(parent instanceof AbstractJsonEntity abstractJsonEntity)){
             throw new IllegalStateException("Parent must be instance of AbstractJsonEntity");
         }
 
-        if(this.parent != null){
-            throw new IllegalStateException("Parent already assigned");
+        if(this.parents == null){
+            this.parents = new HashSet<>();
         }
 
-        this.parent = abstractJsonEntity;
+        this.parents.add(abstractJsonEntity);
     }
 
     @Override
-    public AbstractJsonEntity getParent() {
-        return this.parent;
+    public void addParents(Collection<JsonEntity> entities) {
+        for(JsonEntity entity : entities){
+            addParent(entity);
+        }
+    }
+
+    @Override
+    public Set<AbstractJsonEntity> getParents() {
+        return Set.copyOf(this.parents);
     }
 
     @Override
