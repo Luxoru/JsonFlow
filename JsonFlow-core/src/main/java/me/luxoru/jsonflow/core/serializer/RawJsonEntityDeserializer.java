@@ -18,10 +18,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 @RequiredArgsConstructor
 public class RawJsonEntityDeserializer extends EntityDeserializer<RawJsonEntity> {
@@ -31,7 +28,7 @@ public class RawJsonEntityDeserializer extends EntityDeserializer<RawJsonEntity>
     public RawJsonEntity deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JacksonException {
         ObjectNode node = p.getCodec().readTree(p);
 
-        JsonEntity jsonEntity = mergeWithParentJson(node);
+        List<JsonEntity> jsonEntity = mergeWithParentJson(node);
 
         LinkedHashMap<String, JsonNode> pairs = new LinkedHashMap<>();
 
@@ -44,7 +41,7 @@ public class RawJsonEntityDeserializer extends EntityDeserializer<RawJsonEntity>
         RawJsonEntity entity = new RawJsonEntity(pairs);
 
         if(jsonEntity != null){
-            entity.setParent(jsonEntity);
+            entity.addParents(jsonEntity);
         }
 
         return entity;
