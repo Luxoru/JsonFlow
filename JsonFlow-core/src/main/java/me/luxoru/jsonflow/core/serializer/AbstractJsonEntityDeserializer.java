@@ -12,19 +12,15 @@ import me.luxoru.jsonflow.api.serialize.JsonFlowConversionHandler;
 import me.luxoru.jsonflow.core.entity.AbstractJsonEntity;
 
 import me.luxoru.jsonflow.core.util.ReflectionUtilities;
-import me.luxoru.jsonflow.core.util.collection.Tuple;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Parameter;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 @RequiredArgsConstructor
-public abstract class AbstractJsonEntityDeserializer<T extends AbstractJsonEntity> extends EntityDeserializer<T> {
+public class AbstractJsonEntityDeserializer<T extends AbstractJsonEntity> extends EntityDeserializer<T> {
 
 
     @Override
