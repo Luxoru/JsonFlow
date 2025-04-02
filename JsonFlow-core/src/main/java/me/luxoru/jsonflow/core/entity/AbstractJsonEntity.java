@@ -47,7 +47,7 @@ public abstract class AbstractJsonEntity implements JsonEntity {
             return this.jsonObject;
         }
 
-        List<Field> allFields = ReflectionUtilities.getAllFields(this.getClass(), AbstractJsonEntity.class);
+        List<Field> allFields = ReflectionUtilities.getAllFieldsReversed(this.getClass(), AbstractJsonEntity.class);
 
         for (Field field : allFields) {
             

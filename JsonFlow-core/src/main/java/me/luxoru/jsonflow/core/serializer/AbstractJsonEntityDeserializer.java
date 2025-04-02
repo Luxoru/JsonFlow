@@ -5,9 +5,8 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.RequiredArgsConstructor;
-import me.luxoru.jsonflow.api.annotation.FlowCreator;
 import me.luxoru.jsonflow.api.annotation.FlowField;
-import me.luxoru.jsonflow.api.annotation.FlowParameter;
+import me.luxoru.jsonflow.api.annotation.FlowIgnore;
 import me.luxoru.jsonflow.api.entity.JsonEntity;
 import me.luxoru.jsonflow.api.serialize.JsonFlowConversionHandler;
 import me.luxoru.jsonflow.core.entity.AbstractJsonEntity;
@@ -17,6 +16,7 @@ import me.luxoru.jsonflow.core.util.collection.Tuple;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
@@ -36,72 +36,75 @@ public abstract class AbstractJsonEntityDeserializer<T extends AbstractJsonEntit
         T entityData;
 
         Class<T> entityClass = getEntityClass();
-        for (Constructor<?> constructor : entityClass.getConstructors()) {
-            if(!constructor.isAnnotationPresent(FlowCreator.class))continue;
 
-            //FlowCreator can deserialise
-            LinkedHashMap<String, Tuple<Class<?>, Class<? extends JsonFlowConversionHandler>>> constructorParams = new LinkedHashMap<>();
+        try {
+            Constructor<T> declaredConstructor = entityClass.getDeclaredConstructor();
+            declaredConstructor.setAccessible(true);
+            entityData = declaredConstructor.newInstance();
 
-            for (Parameter parameter : constructor.getParameters()) {
-                FlowParameter flowParameter = parameter.getAnnotation(FlowParameter.class);
-                String fieldName;
-                if(flowParameter == null){
-                    if(node.get(parameter.getName()) == null){
-                        System.out.println("Node %s doesnt exist".formatted(parameter.getName()));
+            List<Field> allFields = ReflectionUtilities.getAllFieldsReversed(entityClass, AbstractJsonEntity.class);
+
+            for(Field field : allFields){
+                field.setAccessible(true);
+                if(field.isAnnotationPresent(FlowIgnore.class))continue;
+                FlowField flowField = field.getAnnotation(FlowField.class);
+                JsonNode fieldName;
+                Class<?> fieldType = field.getType();
+                if(flowField == null){
+                    fieldName = node.get(field.getName());
+                    if(fieldName == null){
+                        System.out.printf("Field %s has no data set. Ignoring%n", field.getName());
                         continue;
                     }
-                    System.out.println("Node %s exists".formatted(parameter.getName()));
-                    fieldName = parameter.getName();
-                }
-                else{
-                    fieldName = flowParameter.value();
-                }
-                Class<?> type = parameter.getType();
-                constructorParams.put(fieldName, new Tuple<>(type, flowParameter == null ? JsonFlowConversionHandler.class : flowParameter.serializer()));
-            }
-            List<Object> objectArr = new ArrayList<>();
-            for(var entry : constructorParams.entrySet()){
-                JsonNode jsonNode = node.get(entry.getKey());
-                if(jsonNode == null){
-                    throw new IllegalStateException("JsonNode not found (%s)".formatted(entry.getKey()));
-                }
+                    Object serialized = JsonConverter.serialize(fieldName, fieldType);
 
-                var tuple = entry.getValue();
-                Class<?> objectClass = tuple.getFirst();
-
-                Class<? extends JsonFlowConversionHandler> serializer = tuple.getSecond();
-
-                if (serializer.equals(JsonFlowConversionHandler.class)) {
-                    Object value = JsonConverter.serialize(node.get(entry.getKey()), objectClass);
-                    if(value == null){
-                        value = JsonConverter.convert(node.get(entry.getKey()), objectClass);
+                    if(serialized == null){
+                        serialized = JsonConverter.convert(fieldName, fieldType);
                     }
-                    objectArr.add(value);
+                    field.set(entityData, serialized);
                     continue;
                 }
 
-                Object serializedObject = JsonConverter.serialize(node, objectClass, serializer);
+                Class<? extends JsonFlowConversionHandler> serializer = flowField.serializer();
 
+                fieldName = node.get(flowField.value());
 
-                objectArr.add(serializedObject);
-            }
-
-            try{
-                entityData = (T) constructor.newInstance(objectArr.toArray());
-                if(jsonEntity != null){
-                    entityData.setParent(jsonEntity);
+                if(fieldName == null){
+                    System.out.printf("Field %s has no data set. Ignoring%n", field.getName());
+                    continue;
                 }
-                System.out.println("CONSTRUCTOR");
-                return entityData;
-            } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
-                throw new RuntimeException(e);
+
+                if(serializer.equals(JsonFlowConversionHandler.class)){
+                    Object serialized = JsonConverter.serialize(fieldName, fieldType);
+
+                    if(serialized == null){
+                        serialized = JsonConverter.convert(fieldName, fieldType);
+                    }
+                    field.set(entityData, serialized);
+                    continue;
+                }
+
+                Object serializedObject = JsonConverter.serialize(node, fieldType, serializer);
+
+                field.set(entityData, serializedObject);
+
             }
 
+            return entityData;
 
+
+        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+            System.out.println("Default constructor doesnt exist");
         }
 
 
+
         entityData = getEntityData(node);
+
+        if(entityData == null){
+            return null;
+        }
 
         if(jsonEntity != null){
             entityData.setParent(jsonEntity);

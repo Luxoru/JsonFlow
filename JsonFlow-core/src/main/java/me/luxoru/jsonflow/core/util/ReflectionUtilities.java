@@ -3,10 +3,7 @@ package me.luxoru.jsonflow.core.util;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 public class ReflectionUtilities {
 
@@ -103,6 +100,27 @@ public class ReflectionUtilities {
         return clazz == Integer.class || clazz == Double.class || clazz == Float.class ||
                 clazz == Long.class || clazz == Short.class || clazz == Byte.class ||
                 clazz == Boolean.class || clazz == Character.class;
+    }
+
+    public static List<Field> getAllFieldsReversed(Class<?> clazz, Class<?> ignore){
+        List<Field> allFields = new ArrayList<>();
+        Deque<Class<?>> classStack = new LinkedList<>();
+        while (clazz != null) {
+            if(clazz.equals(ignore)) {
+                clazz = clazz.getSuperclass();
+                continue;
+            }
+            classStack.push(clazz);
+            clazz = clazz.getSuperclass();
+        }
+
+        while (!classStack.isEmpty()){
+            Class<?> pop = classStack.pop();
+            Field[] declaredFields = pop.getDeclaredFields();
+            allFields.addAll(Arrays.asList(declaredFields));
+        }
+
+        return allFields;
     }
 
     public static List<Field> getAllFields(Class<?> clazz, Class<?> ignore){
