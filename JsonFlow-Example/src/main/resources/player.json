@@ -1,5 +1,5 @@
 {
-  "parent": "damageable.json",
+  "parent": ["damageable.json", "entity.json"],
   "name": "Player",
   "position": {
     "x": 100.0,
