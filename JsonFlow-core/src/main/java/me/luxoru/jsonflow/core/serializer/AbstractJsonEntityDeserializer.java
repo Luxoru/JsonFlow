@@ -27,7 +27,7 @@ public class AbstractJsonEntityDeserializer<T extends AbstractJsonEntity> extend
     public final T deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
 
         ObjectNode node = p.getCodec().readTree(p);
-        JsonEntity jsonEntity = mergeWithParentJson(node);
+        List<JsonEntity> jsonEntity = mergeWithParentJson(node);
 
         T entityData;
 
@@ -49,7 +49,7 @@ public class AbstractJsonEntityDeserializer<T extends AbstractJsonEntity> extend
                 if(flowField == null){
                     fieldName = node.get(field.getName());
                     if(fieldName == null){
-                        System.out.printf("Field %s has no data set. Ignoring%n", field.getName());
+                        System.out.printf("Field %s has no data set. Setting as null\n", field.getName());
                         continue;
                     }
                     Object serialized = JsonConverter.serialize(fieldName, fieldType);
@@ -66,7 +66,7 @@ public class AbstractJsonEntityDeserializer<T extends AbstractJsonEntity> extend
                 fieldName = node.get(flowField.value());
 
                 if(fieldName == null){
-                    System.out.printf("Field %s has no data set. Ignoring%n", field.getName());
+                    System.out.printf("Field %s has no data set. Setting as null\n", field.getName());
                     continue;
                 }
 
@@ -103,7 +103,7 @@ public class AbstractJsonEntityDeserializer<T extends AbstractJsonEntity> extend
         }
 
         if(jsonEntity != null){
-            entityData.setParent(jsonEntity);
+            entityData.addParents(jsonEntity);
         }
 
 
