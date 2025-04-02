@@ -11,7 +11,7 @@
     <properties>
         <maven.compiler.source>23</maven.compiler.source>
         <maven.compiler.target>23</maven.compiler.target>
-        <maven.version>3.9.5</maven.version>
+        <maven.version>3.9.9</maven.version>
     </properties>
 
     <dependencies>
