@@ -1,15 +1,19 @@
 package me.luxoru.jsonflow.api.entity;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import java.util.Collection;
+import java.util.Set;
 
 public interface JsonEntity {
 
-    default JsonEntity getParent() {
+    default Set<? extends JsonEntity> getParents() {
         return null;
     }
 
-    void setParent(JsonEntity parent);
+    void addParent(JsonEntity parent);
+
+    void addParents(Collection<JsonEntity> entities);
 
     String getFileName();
 
