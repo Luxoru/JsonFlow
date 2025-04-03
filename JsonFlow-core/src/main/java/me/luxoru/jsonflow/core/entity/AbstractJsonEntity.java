@@ -25,7 +25,6 @@ public abstract class AbstractJsonEntity implements JsonEntity {
 
     private Set<AbstractJsonEntity> parents;
     private String fileName;
-    private ObjectNode jsonObject;
 
     protected final FlowObjectMapper objectMapper = (FlowObjectMapper) FlowObjectMapper.instance()
             .enable(SerializationFeature.INDENT_OUTPUT);
@@ -40,18 +39,18 @@ public abstract class AbstractJsonEntity implements JsonEntity {
     @Override
     public ObjectNode toJsonObject(){
 
-        this.jsonObject = objectMapper.createObjectNode();
+        ObjectNode jsonObject = objectMapper.createObjectNode();
         if(this.parents != null){
             for (AbstractJsonEntity parent : this.getParents()) {
-                this.jsonObject.setAll(parent.toJsonObject());
+                jsonObject.setAll(parent.toJsonObject());
             }
 
-            this.jsonObject.remove("type");
-            this.jsonObject.remove("parent");
+            jsonObject.remove("type");
+            jsonObject.remove("parent");
         }
         if(!this.getClass().isAnnotationPresent(FlowSerializable.class)){
-            this.jsonObject.setAll(thisToJsonObject());
-            return this.jsonObject;
+            jsonObject.setAll(thisToJsonObject());
+            return jsonObject;
         }
 
         List<Field> allFields = ReflectionUtilities.getAllFieldsReversed(this.getClass(), AbstractJsonEntity.class);
@@ -70,7 +69,7 @@ public abstract class AbstractJsonEntity implements JsonEntity {
             Object value = ReflectionUtilities.getField(this, field.getName(), field.getType());
 
             if(value == null){
-                this.jsonObject.putNull(fieldName);
+                jsonObject.putNull(fieldName);
                 continue;
             }
             Class<? extends JsonFlowConversionHandler> serializer = flowField == null ? JsonFlowConversionHandler.class : flowField.serializer();
@@ -80,27 +79,27 @@ public abstract class AbstractJsonEntity implements JsonEntity {
                 if (field.getType().isPrimitive() || ReflectionUtilities.isWrapperType(field.getType())) {
 
                     switch (value) {
-                        case Integer number -> this.jsonObject.put(fieldName, number);
-                        case Double number -> this.jsonObject.put(fieldName, number);
-                        case Float number -> this.jsonObject.put(fieldName, number);
-                        case Boolean b -> this.jsonObject.put(fieldName, b);
+                        case Integer number -> jsonObject.put(fieldName, number);
+                        case Double number -> jsonObject.put(fieldName, number);
+                        case Float number -> jsonObject.put(fieldName, number);
+                        case Boolean b -> jsonObject.put(fieldName, b);
                         default -> {
                             System.out.printf("Unexpected primitive type (%s). Handling as string\n".formatted(field.getType()));
-                            this.jsonObject.put(fieldName, value.toString());
+                            jsonObject.put(fieldName, value.toString());
                         }
                     }
                 }
                 else if(field.getType().equals(String.class)){
-                    this.jsonObject.put(fieldName, value.toString());
+                    jsonObject.put(fieldName, value.toString());
                 }
                 else {
                     ObjectNode deserialize = JsonConverter.deserialize(value, value.getClass());
                     if(deserialize == null){
                         System.out.printf("Unknown type handled (%s). Does it need a custom handler? Handling as string\n".formatted(field.getType()));
-                        this.jsonObject.put(fieldName, value.toString());
+                        jsonObject.put(fieldName, value.toString());
                     }
                     else{
-                        this.jsonObject.set(fieldName, deserialize);
+                        jsonObject.set(fieldName, deserialize);
                     }
 
                 }
@@ -110,11 +109,11 @@ public abstract class AbstractJsonEntity implements JsonEntity {
 
             ObjectNode deserialize = JsonConverter.deserialize(value, value.getClass(), serializer);
             if(deserialize == null)return null;
-            this.jsonObject.set(fieldName, deserialize);
+            jsonObject.set(fieldName, deserialize);
 
         }
 
-        return this.jsonObject;
+        return jsonObject;
 
     }
 
