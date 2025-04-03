@@ -6,7 +6,7 @@ import java.net.URISyntaxException;
 
 public class EntityExample {
 
-    public static void main(String[] args) throws URISyntaxException {
+    public static void main(String[] args) {
 
         Player player = JsonFlow.load("player", Player.class);
 
