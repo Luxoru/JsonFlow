@@ -1,8 +1,20 @@
 package me.luxoru.jsonflow.core.manager;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import me.luxoru.jsonflow.api.annotation.FlowSerializable;
 import me.luxoru.jsonflow.api.entity.JsonEntity;
 import me.luxoru.jsonflow.api.manager.JsonEntityManager;
+import me.luxoru.jsonflow.core.entity.AbstractJsonEntity;
+import me.luxoru.jsonflow.core.serializer.AbstractJsonEntityDeserializer;
+import me.luxoru.jsonflow.core.serializer.EntityDeserializer;
+import me.luxoru.jsonflow.core.serializer.factory.EntityDeserializerFactory;
+import me.luxoru.jsonflow.core.util.ReflectionUtilities;
+import me.luxoru.jsonflow.core.util.databind.FlowObjectMapper;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -15,11 +27,13 @@ import java.util.*;
 public class AbstractJsonEntityManager implements JsonEntityManager {
 
     private final Map<String, JsonEntity> jsonFileMap;
+    private final Map<Class<?>, JsonDeserializer<?>> classJsonDeserializerMap;
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final FlowObjectMapper mapper = FlowObjectMapper.instance();
 
     public AbstractJsonEntityManager() {
         jsonFileMap = new HashMap<>();
+        classJsonDeserializerMap = new HashMap<>();
     }
 
     @Override
@@ -77,8 +91,27 @@ public class AbstractJsonEntityManager implements JsonEntityManager {
         }
 
         try(FileReader reader = new FileReader(file)){
+            T jsonEntity;
+            if(!jsonClazz.isAnnotationPresent(JsonDeserialize.class)){
+                FlowSerializable serializable = jsonClazz.getAnnotation(FlowSerializable.class);
+                JsonDeserializer instance = classJsonDeserializerMap.get(jsonClazz);
+                if(instance == null){
+                    if(serializable == null || serializable.using().equals(JsonDeserializer.None.class)){
+                        instance = EntityDeserializerFactory.createDeserializer(jsonClazz);
+                    }
+                    else{
+                        instance =  ReflectionUtilities.createInstance(serializable.using());
+                    }
+                    classJsonDeserializerMap.put(jsonClazz, instance);
+                }
+                JsonParser parser = mapper.getFactory().createParser(reader);
+                jsonEntity = (T) instance.deserialize(parser, mapper.getDeserializationContext());
+            }
+            else{
+                jsonEntity = mapper.readValue(reader, jsonClazz);
+            }
 
-            T jsonEntity = mapper.readValue(reader, jsonClazz);
+
 
             if(jsonEntity == null){
                 throw new IllegalStateException("Unable to load file %s. Is it being deserialized correctly?".formatted(file.getName()));
@@ -97,6 +130,8 @@ public class AbstractJsonEntityManager implements JsonEntityManager {
             return null;
         }
     }
+
+
 
     @Override
     public Collection<JsonEntity> getEntities() {
