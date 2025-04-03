@@ -11,6 +11,8 @@ import me.luxoru.jsonflow.api.serialize.JsonFlowConversionHandler;
 import me.luxoru.jsonflow.core.serializer.AbstractJsonEntityDeserializer;
 import me.luxoru.jsonflow.core.serializer.JsonConverter;
 import me.luxoru.jsonflow.core.util.ReflectionUtilities;
+import me.luxoru.jsonflow.core.util.databind.FlowObjectMapper;
+
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.HashSet;
@@ -25,7 +27,7 @@ public abstract class AbstractJsonEntity implements JsonEntity {
     private String fileName;
     private ObjectNode jsonObject;
 
-    protected final ObjectMapper objectMapper = new ObjectMapper()
+    protected final FlowObjectMapper objectMapper = (FlowObjectMapper) FlowObjectMapper.instance()
             .enable(SerializationFeature.INDENT_OUTPUT);
 
 
