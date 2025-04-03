@@ -25,13 +25,13 @@ public class JsonConverter {
     public static <T> ObjectNode deserialize(Object object, Class<T> clazz, @Nullable Class<? extends JsonFlowConversionHandler> serializer){
         if(objectConverter.containsKey(clazz)){
             JsonFlowConversionHandler conversionHandler = objectConverter.get(clazz);
-            return conversionHandler.deserialize(object);
+            return conversionHandler.deserialize(object, objectMapper);
         }
         if(serializer == null)return null;
         JsonFlowConversionHandler instance = ReflectionUtilities.createInstance(serializer);
         if(instance == null)return null;
         objectConverter.put(clazz, instance);
-        return instance.deserialize(object);
+        return instance.deserialize(object, objectMapper);
 
     }
 
