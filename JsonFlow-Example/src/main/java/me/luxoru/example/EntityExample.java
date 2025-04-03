@@ -14,16 +14,7 @@ public class EntityExample {
 
     public static void main(String[] args) throws URISyntaxException {
 
-        URL resourceUrl = EntityExample.class.getClassLoader().getResource("player.json");
-
-        if (resourceUrl == null) {
-            System.out.println("File not found in resources.");
-            return;
-        }
-
-        File file = Paths.get(resourceUrl.toURI()).toFile();
-
-        Player player = JsonFlow.load(file, Player.class);
+        Player player = JsonFlow.load("player", Player.class);
 
         System.out.println(player.toJsonObject().toPrettyString());
 
