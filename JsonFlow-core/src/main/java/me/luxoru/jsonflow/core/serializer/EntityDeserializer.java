@@ -15,9 +15,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public abstract class EntityDeserializer<T> extends JsonDeserializer<T> {
 
-    @Getter
     private final Class<T> entityClass;
 
     protected EntityDeserializer() {
@@ -49,19 +49,16 @@ public abstract class EntityDeserializer<T> extends JsonDeserializer<T> {
                 }
 
                 RawJsonEntity jsonEntity = null;
-                if(parent != null) {
-                    URL url = AbstractJsonEntityDeserializer.class.getClassLoader().getResource(parent);
+                URL url = AbstractJsonEntityDeserializer.class.getClassLoader().getResource(parent);
 
-                    if (url != null) {
+                if (url != null) {
 
-                        try {
-                            jsonEntity = JsonFlow.load(Paths.get(url.toURI()).toFile(), RawJsonEntity.class);
-                        } catch (URISyntaxException _) {
-                        }
+                    try {
+                        jsonEntity = JsonFlow.load(Paths.get(url.toURI()).toFile(), RawJsonEntity.class);
+                    } catch (URISyntaxException _) {
                     }
-
-
                 }
+
 
                 //Squash tree
                 if(jsonEntity != null){
@@ -92,19 +89,16 @@ public abstract class EntityDeserializer<T> extends JsonDeserializer<T> {
         }
 
         RawJsonEntity jsonEntity = null;
-        if(parent != null) {
-            URL url = AbstractJsonEntityDeserializer.class.getClassLoader().getResource(parent);
+        URL url = AbstractJsonEntityDeserializer.class.getClassLoader().getResource(parent);
 
-            if (url != null) {
+        if (url != null) {
 
-                try {
-                    jsonEntity = JsonFlow.load(Paths.get(url.toURI()).toFile(), RawJsonEntity.class);
-                } catch (URISyntaxException _) {
-                }
+            try {
+                jsonEntity = JsonFlow.load(Paths.get(url.toURI()).toFile(), RawJsonEntity.class);
+            } catch (URISyntaxException _) {
             }
-
-
         }
+
 
         //Squash tree
         if(jsonEntity != null){
