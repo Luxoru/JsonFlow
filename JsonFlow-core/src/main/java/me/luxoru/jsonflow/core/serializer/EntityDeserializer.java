@@ -42,46 +42,25 @@ public abstract class EntityDeserializer<T> extends JsonDeserializer<T> {
             for(JsonNode node : parentNode){
                 if(node.isArray())throw new IllegalStateException("Inner arrays as parents not supported!");
 
-                String parent = node.asText();
-
-                if(!parent.endsWith(".json")){
-                    parent += ".json";
+                JsonEntity parentEntity = getParentEntity(rootNode, node);
+                if(parentEntity != null){
+                    entities.add(parentEntity);
                 }
-
-                RawJsonEntity jsonEntity = null;
-                URL url = AbstractJsonEntityDeserializer.class.getClassLoader().getResource(parent);
-
-                if (url != null) {
-
-                    try {
-                        jsonEntity = JsonFlow.load(Paths.get(url.toURI()).toFile(), RawJsonEntity.class);
-                    } catch (URISyntaxException _) {
-                    }
-                }
-
-
-                //Squash tree
-                if(jsonEntity != null){
-                    ObjectNode jsonObject = jsonEntity.toJsonObject();
-                    jsonObject.fields().forEachRemaining(entry ->{
-                        if(!rootNode.has(entry.getKey())){
-                            rootNode.set(entry.getKey(), entry.getValue());
-                        }
-                    });
-                    rootNode.remove("parent");
-                    rootNode.remove("type");
-                    entities.add(jsonEntity);
-                }
-
-
-
 
             }
             return entities;
         }
 
-        //1 value in parent;
+        JsonEntity parentEntity = getParentEntity(rootNode, parentNode);
+        if(parentEntity != null){
+            entities.add(parentEntity);
+        }
+        
+        return entities;
+    }
 
+
+    private JsonEntity getParentEntity(ObjectNode rootNode, JsonNode parentNode){
         String parent = parentNode.asText();
 
         if(!parent.endsWith(".json")){
@@ -99,7 +78,6 @@ public abstract class EntityDeserializer<T> extends JsonDeserializer<T> {
             }
         }
 
-
         //Squash tree
         if(jsonEntity != null){
             ObjectNode jsonObject = jsonEntity.toJsonObject();
@@ -110,12 +88,9 @@ public abstract class EntityDeserializer<T> extends JsonDeserializer<T> {
             });
             rootNode.remove("parent");
             rootNode.remove("type");
-            entities.add(jsonEntity);
         }
 
-        return entities;
-
-
+        return jsonEntity;
     }
 
 }
