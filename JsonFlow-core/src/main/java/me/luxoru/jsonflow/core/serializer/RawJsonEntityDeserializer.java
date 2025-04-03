@@ -11,7 +11,7 @@ import me.luxoru.jsonflow.core.entity.RawJsonEntity;
 import java.io.IOException;
 import java.util.*;
 
-@RequiredArgsConstructor
+
 public class RawJsonEntityDeserializer extends EntityDeserializer<RawJsonEntity> {
 
 
