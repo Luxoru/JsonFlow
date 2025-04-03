@@ -17,8 +17,16 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-@RequiredArgsConstructor
-public class AbstractJsonEntityDeserializer<T extends AbstractJsonEntity> extends EntityDeserializer<T> {
+
+public class AbstractJsonEntityDeserializer<T extends JsonEntity> extends EntityDeserializer<T> {
+
+    public AbstractJsonEntityDeserializer(){
+        super();
+    }
+
+    public AbstractJsonEntityDeserializer(boolean anonymous){
+        super(anonymous);
+    }
 
 
     @Override
