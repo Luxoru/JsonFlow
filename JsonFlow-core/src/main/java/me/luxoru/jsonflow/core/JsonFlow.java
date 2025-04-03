@@ -41,6 +41,14 @@ public final class JsonFlow {
         return manager.getFileMap();
     }
 
+    public static RawJsonEntity loadRaw(String jsonFileName){
+        return load(jsonFileName, RawJsonEntity.class);
+    }
+
+    public static RawJsonEntity loadRaw(String jsonFileName, boolean addFileToCache){
+        return load(jsonFileName, RawJsonEntity.class, addFileToCache);
+    }
+
     public static RawJsonEntity loadRaw(File jsonFile){
         return load(jsonFile, RawJsonEntity.class);
     }
