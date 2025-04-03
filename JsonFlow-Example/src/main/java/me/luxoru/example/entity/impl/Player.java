@@ -8,9 +8,9 @@ import me.luxoru.example.util.Position;
 import me.luxoru.example.util.serializer.PositionSerializer;
 import me.luxoru.jsonflow.api.annotation.FlowField;
 import me.luxoru.jsonflow.api.annotation.FlowSerializable;
+import me.luxoru.jsonflow.core.serializer.AbstractJsonEntityDeserializer;
 
 @Getter
-@JsonDeserialize(using = PlayerDeserializer.class)
 @FlowSerializable
 public class Player extends AbstractEntity {
 
