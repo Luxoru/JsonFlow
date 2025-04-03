@@ -7,9 +7,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import me.luxoru.jsonflow.api.serialize.JsonFlowConversionHandler;
 import me.luxoru.jsonflow.core.util.ReflectionUtilities;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.HashMap;
 import java.util.Map;
+
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class JsonConverter {
 

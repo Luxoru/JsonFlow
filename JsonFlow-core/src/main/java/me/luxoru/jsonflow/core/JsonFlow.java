@@ -4,7 +4,6 @@ import me.luxoru.jsonflow.api.entity.JsonEntity;
 import me.luxoru.jsonflow.api.manager.JsonEntityManager;
 import me.luxoru.jsonflow.core.entity.RawJsonEntity;
 import me.luxoru.jsonflow.core.manager.AbstractJsonEntityManager;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Collection;

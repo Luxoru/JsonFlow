@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import me.luxoru.example.entity.impl.Player;
 import me.luxoru.example.serializer.EntityDeserializer;
-import me.luxoru.example.util.Position;
 
 public class PlayerDeserializer extends EntityDeserializer<Player> {
     @Override

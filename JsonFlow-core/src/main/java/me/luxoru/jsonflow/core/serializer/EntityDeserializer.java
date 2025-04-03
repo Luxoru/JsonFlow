@@ -7,7 +7,6 @@ import lombok.Getter;
 import me.luxoru.jsonflow.api.entity.JsonEntity;
 import me.luxoru.jsonflow.core.JsonFlow;
 import me.luxoru.jsonflow.core.entity.RawJsonEntity;
-
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.URISyntaxException;
@@ -15,7 +14,6 @@ import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public abstract class EntityDeserializer<T> extends JsonDeserializer<T> {
 

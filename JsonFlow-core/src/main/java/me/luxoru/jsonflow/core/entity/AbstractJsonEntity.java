@@ -11,7 +11,6 @@ import me.luxoru.jsonflow.api.serialize.JsonFlowConversionHandler;
 import me.luxoru.jsonflow.core.serializer.AbstractJsonEntityDeserializer;
 import me.luxoru.jsonflow.core.serializer.JsonConverter;
 import me.luxoru.jsonflow.core.util.ReflectionUtilities;
-
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.HashSet;

@@ -3,9 +3,6 @@ package me.luxoru.jsonflow.core.manager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.luxoru.jsonflow.api.entity.JsonEntity;
 import me.luxoru.jsonflow.api.manager.JsonEntityManager;
-import me.luxoru.jsonflow.core.entity.RawJsonEntity;
-
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;

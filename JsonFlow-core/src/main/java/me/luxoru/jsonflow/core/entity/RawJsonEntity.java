@@ -3,12 +3,10 @@ package me.luxoru.jsonflow.core.entity;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import me.luxoru.jsonflow.api.entity.PersistableEntity;
 import me.luxoru.jsonflow.core.serializer.RawJsonEntityDeserializer;
-
 import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;

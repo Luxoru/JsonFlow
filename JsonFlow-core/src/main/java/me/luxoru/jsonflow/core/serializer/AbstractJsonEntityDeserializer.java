@@ -10,9 +10,7 @@ import me.luxoru.jsonflow.api.annotation.FlowIgnore;
 import me.luxoru.jsonflow.api.entity.JsonEntity;
 import me.luxoru.jsonflow.api.serialize.JsonFlowConversionHandler;
 import me.luxoru.jsonflow.core.entity.AbstractJsonEntity;
-
 import me.luxoru.jsonflow.core.util.ReflectionUtilities;
-
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;

@@ -1,7 +1,6 @@
 package me.luxoru.jsonflow.api.annotation;
 
 import me.luxoru.jsonflow.api.serialize.JsonFlowConversionHandler;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

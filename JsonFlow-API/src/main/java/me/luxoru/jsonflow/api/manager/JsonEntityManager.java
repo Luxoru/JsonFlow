@@ -1,8 +1,6 @@
 package me.luxoru.jsonflow.api.manager;
 
 import me.luxoru.jsonflow.api.entity.JsonEntity;
-
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Collection;

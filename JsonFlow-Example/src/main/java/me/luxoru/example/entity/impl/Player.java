@@ -19,8 +19,6 @@ public class Player extends AbstractEntity {
     @FlowField(value = "position", serializer = PositionSerializer.class)
     private Position position;
 
-
-
     public void damage(float damage){
         health -= damage;
     }

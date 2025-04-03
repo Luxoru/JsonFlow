@@ -1,7 +1,6 @@
 package me.luxoru.example.entity;
 
 import lombok.RequiredArgsConstructor;
-import me.luxoru.jsonflow.api.annotation.FlowField;
 import me.luxoru.jsonflow.core.entity.AbstractJsonEntity;
 
 @RequiredArgsConstructor
