@@ -50,6 +50,23 @@ public final class JsonFlow {
         return load(jsonFile, RawJsonEntity.class, addFileToCache);
     }
 
+    public static <T extends JsonEntity> T load(String fileName, Class<T> clazz) {
+        return load(fileName, clazz, true);
+    }
+
+    public static <T extends JsonEntity> T load(String fileName, Class<T> clazz, boolean addFileToCache) {
+        if(!initialized){
+            init();
+        }
+        try {
+            return manager.readFile(fileName, clazz,addFileToCache);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            System.out.println("Error occurred loading file");
+            return null;
+        }
+    }
+
     public static <T extends JsonEntity> T load(File file, Class<T> clazz) {
         return load(file, clazz, true);
     }
