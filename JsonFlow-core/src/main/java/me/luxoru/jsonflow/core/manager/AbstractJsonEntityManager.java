@@ -10,6 +10,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class AbstractJsonEntityManager implements JsonEntityManager {
@@ -30,6 +33,31 @@ public class AbstractJsonEntityManager implements JsonEntityManager {
     @Override
     public <T extends JsonEntity> T getEntity(String name, Class<T> clazz) {
         return clazz.cast(jsonFileMap.get(name));
+    }
+
+    @Override
+    public <T extends JsonEntity> T readFile(String jsonFileName, Class<T> jsonClazz) throws FileNotFoundException {
+        return readFile(jsonFileName, jsonClazz, true);
+    }
+
+    @Override
+    public <T extends JsonEntity> T readFile(String jsonFileName, Class<T> jsonClazz, boolean addFileToCache) throws FileNotFoundException {
+        if(!jsonFileName.endsWith(".json")){
+            jsonFileName+= ".json";
+        }
+        URL resourceUrl = ClassLoader.getSystemResource(jsonFileName);
+
+        if (resourceUrl == null) {
+            System.out.println("File %s not found in resources.".formatted(jsonFileName));
+            return null;
+        }
+
+        try {
+            File file = Paths.get(resourceUrl.toURI()).toFile();
+            return readFile(file, jsonClazz, addFileToCache);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
