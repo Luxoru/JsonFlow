@@ -56,7 +56,7 @@ public class AbstractJsonEntityManager implements JsonEntityManager {
             T jsonEntity = mapper.readValue(reader, jsonClazz);
 
             if(jsonEntity == null){
-                throw new IllegalStateException("SMT DEFO WRONG");
+                throw new IllegalStateException("Unable to load file %s. Is it being deserialized correctly?".formatted(file.getName()));
             }
 
             jsonEntity.setFileName(file.getName());
