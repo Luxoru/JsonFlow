@@ -11,6 +11,10 @@ import java.util.Set;
 
 public interface JsonEntityManager {
 
+    <T extends JsonEntity> T readFile(String jsonFileName, Class<T> jsonClazz) throws FileNotFoundException;
+
+    <T extends JsonEntity> T readFile(String jsonFileName, Class<T> jsonClazz, boolean addFileToCache) throws FileNotFoundException;
+
     <T extends JsonEntity> T readFile(File jsonFile, Class<T> jsonClazz) throws FileNotFoundException;
 
     <T extends JsonEntity> T readFile(File jsonFile, Class<T> jsonClazz, boolean addFileToCache) throws FileNotFoundException;
