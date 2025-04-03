@@ -18,7 +18,7 @@ import java.util.List;
 @Getter
 public abstract class EntityDeserializer<T> extends JsonDeserializer<T> {
 
-    private final Class<T> entityClass;
+    protected Class<T> entityClass;
 
     protected EntityDeserializer() {
         Type type = getClass().getGenericSuperclass();
@@ -29,6 +29,9 @@ public abstract class EntityDeserializer<T> extends JsonDeserializer<T> {
             throw new RuntimeException("Could not determine generic type.");
         }
     }
+
+    protected EntityDeserializer(boolean anonymous){}
+
 
     protected List<JsonEntity> mergeWithParentJson(ObjectNode rootNode){
 
