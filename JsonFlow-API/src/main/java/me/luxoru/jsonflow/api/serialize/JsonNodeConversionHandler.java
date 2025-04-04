@@ -1,4 +1,4 @@
 package me.luxoru.jsonflow.api.serialize;
 
-public interface JsonFlowConversionHandler<T> extends JsonFlowSerializer<T>, JsonFlowDeserializer<T>{
+public interface JsonNodeConversionHandler<T> extends JsonNodeSerializer<T>, JsonNodeDeserializer<T> {
 }
