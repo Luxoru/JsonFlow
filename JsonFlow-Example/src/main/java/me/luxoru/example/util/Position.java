@@ -2,14 +2,22 @@ package me.luxoru.example.util;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import me.luxoru.jsonflow.api.annotation.FlowSerializable;
 
-@AllArgsConstructor
 @Getter
 @Setter
+@NoArgsConstructor
 public final class Position {
+
     private float x;
     private float y;
+
+    public Position(final float x, final float y){
+        this.x = x;
+        this.y = y;
+    }
 
     public Position moveX(final float xIncrement){
         this.x += xIncrement;
@@ -20,10 +28,6 @@ public final class Position {
         this.y += yIncrement;
         return this;
     }
-
-
-
-
 
 }
 
