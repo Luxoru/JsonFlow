@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import me.luxoru.jsonflow.api.annotation.FlowField;
 import me.luxoru.jsonflow.api.annotation.FlowSerializable;
+import me.luxoru.jsonflow.api.annotation.NodeSerializable;
 import me.luxoru.jsonflow.api.entity.JsonEntity;
 import me.luxoru.jsonflow.api.serialize.JsonNodeConversionHandler;
 import me.luxoru.jsonflow.core.serializer.AbstractJsonEntityDeserializer;
@@ -73,7 +74,7 @@ public abstract class AbstractJsonEntity implements JsonEntity {
             }
             Class<? extends JsonNodeConversionHandler> serializer = flowField == null ? JsonNodeConversionHandler.class : flowField.serializer();
 
-            if (serializer.equals(JsonNodeConversionHandler.class)) {
+            if (serializer.equals(JsonNodeConversionHandler.class) && !value.getClass().isAnnotationPresent(NodeSerializable.class)) {
 
                 if (field.getType().isPrimitive() || ReflectionUtilities.isWrapperType(field.getType())) {
 
@@ -94,8 +95,6 @@ public abstract class AbstractJsonEntity implements JsonEntity {
                 else {
                     ObjectNode deserialize = JsonConverter.deserialize(value, value.getClass());
                     if(deserialize == null){
-                        //TODO: make custom valueSetter check for loops etc. NodeSerializable annotation for this
-
                         jsonObject.set(fieldName, objectMapper.valueToTree(value));
                     }
                     else{
@@ -107,7 +106,16 @@ public abstract class AbstractJsonEntity implements JsonEntity {
                 continue;
             }
 
-            ObjectNode deserialize = JsonConverter.deserialize(value, value.getClass(), serializer);
+            ObjectNode deserialize;
+            if(serializer.equals(JsonNodeConversionHandler.class)){
+                //No serializer set in field but one in class
+                NodeSerializable annotation = value.getClass().getAnnotation(NodeSerializable.class);
+                deserialize = JsonConverter.deserialize(value, value.getClass(), annotation.serializer());
+            }
+            else{
+                deserialize = JsonConverter.deserialize(value, value.getClass(), serializer);
+            }
+
             if(deserialize == null)return null;
             jsonObject.set(fieldName, deserialize);
 
