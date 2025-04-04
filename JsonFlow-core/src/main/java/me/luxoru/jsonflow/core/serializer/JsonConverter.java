@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import me.luxoru.jsonflow.api.annotation.FlowSerializable;
+import me.luxoru.jsonflow.api.annotation.NodeSerializable;
 import me.luxoru.jsonflow.api.serialize.JsonNodeConversionHandler;
 import me.luxoru.jsonflow.core.util.ReflectionUtilities;
 import org.jetbrains.annotations.Nullable;
@@ -65,6 +66,9 @@ public class JsonConverter {
         try {
             return objectMapper.treeToValue(node, clazz);
         } catch (JsonProcessingException e) {
+            if(clazz.isAnnotationPresent(NodeSerializable.class)){
+                return null;
+            }
             throw new RuntimeException("Unable to convert object to map for class (%s) and node (%s)".formatted(clazz, node.asText()));
         }
     }
