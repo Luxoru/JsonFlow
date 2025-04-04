@@ -4,10 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import me.luxoru.jsonflow.api.serialize.JsonFlowConversionHandler;
+import me.luxoru.jsonflow.api.annotation.FlowSerializable;
+import me.luxoru.jsonflow.api.serialize.JsonNodeConversionHandler;
 import me.luxoru.jsonflow.core.util.ReflectionUtilities;
 import org.jetbrains.annotations.Nullable;
+
+import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
@@ -15,20 +19,20 @@ public class JsonConverter {
 
     private static ObjectMapper objectMapper;
 
-    private static final Map<Class<?>, JsonFlowConversionHandler> objectConverter = new HashMap<>();
+    private static final Map<Class<?>, JsonNodeConversionHandler> objectConverter = new HashMap<>();
 
     public static <T> ObjectNode deserialize(Object object, Class<T> clazz){
         return deserialize(object, clazz, null);
     }
 
 
-    public static <T> ObjectNode deserialize(Object object, Class<T> clazz, @Nullable Class<? extends JsonFlowConversionHandler> serializer){
+    public static <T> ObjectNode deserialize(Object object, Class<T> clazz, @Nullable Class<? extends JsonNodeConversionHandler> serializer){
         if(objectConverter.containsKey(clazz)){
-            JsonFlowConversionHandler conversionHandler = objectConverter.get(clazz);
+            JsonNodeConversionHandler conversionHandler = objectConverter.get(clazz);
             return conversionHandler.deserialize(object, objectMapper);
         }
         if(serializer == null)return null;
-        JsonFlowConversionHandler instance = ReflectionUtilities.createInstance(serializer);
+        JsonNodeConversionHandler instance = ReflectionUtilities.createInstance(serializer);
         if(instance == null)return null;
         objectConverter.put(clazz, instance);
         return instance.deserialize(object, objectMapper);
@@ -39,13 +43,13 @@ public class JsonConverter {
         return serialize(node, clazz, null);
     }
 
-    public static <T> T serialize(JsonNode jsonNode, Class<T> clazz, @Nullable Class<? extends JsonFlowConversionHandler> serializer){
+    public static <T> T serialize(JsonNode jsonNode, Class<T> clazz, @Nullable Class<? extends JsonNodeConversionHandler> serializer){
         if(objectConverter.containsKey(clazz)){
-            JsonFlowConversionHandler conversionHandler = objectConverter.get(clazz);
+            JsonNodeConversionHandler conversionHandler = objectConverter.get(clazz);
             return (T) conversionHandler.serialize(jsonNode);
         }
         if(serializer == null)return null;
-        JsonFlowConversionHandler instance = ReflectionUtilities.createInstance(serializer);
+        JsonNodeConversionHandler instance = ReflectionUtilities.createInstance(serializer);
         if(instance == null)return null;
         objectConverter.put(clazz, instance);
         return (T) instance.serialize(jsonNode);
