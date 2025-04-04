@@ -4,11 +4,10 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import lombok.RequiredArgsConstructor;
 import me.luxoru.jsonflow.api.annotation.FlowField;
 import me.luxoru.jsonflow.api.annotation.FlowIgnore;
 import me.luxoru.jsonflow.api.entity.JsonEntity;
-import me.luxoru.jsonflow.api.serialize.JsonFlowConversionHandler;
+import me.luxoru.jsonflow.api.serialize.JsonNodeConversionHandler;
 import me.luxoru.jsonflow.core.entity.AbstractJsonEntity;
 import me.luxoru.jsonflow.core.util.ReflectionUtilities;
 import java.io.IOException;
@@ -67,16 +66,16 @@ public class AbstractJsonEntityDeserializer<T extends JsonEntity> extends Entity
                     continue;
                 }
 
-                Class<? extends JsonFlowConversionHandler> serializer = flowField.serializer();
+                Class<? extends JsonNodeConversionHandler> serializer = flowField.serializer();
 
-                fieldName = node.get(flowField.value());
+                fieldName = node.get((flowField.value().equalsIgnoreCase("") ? field.getName() : flowField.value()));
 
                 if(fieldName == null){
                     System.out.printf("Field %s has no data set. Setting as null\n", field.getName());
                     continue;
                 }
 
-                if(serializer.equals(JsonFlowConversionHandler.class)){
+                if(serializer.equals(JsonNodeConversionHandler.class)){
                     Object serialized = JsonConverter.serialize(fieldName, fieldType);
 
                     if(serialized == null){
