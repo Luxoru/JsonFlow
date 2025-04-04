@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import me.luxoru.jsonflow.api.annotation.FlowField;
 import me.luxoru.jsonflow.api.annotation.FlowIgnore;
+import me.luxoru.jsonflow.api.annotation.NodeSerializable;
 import me.luxoru.jsonflow.api.entity.JsonEntity;
 import me.luxoru.jsonflow.api.serialize.JsonNodeConversionHandler;
 import me.luxoru.jsonflow.core.entity.AbstractJsonEntity;
@@ -57,7 +58,17 @@ public class AbstractJsonEntityDeserializer<T extends JsonEntity> extends Entity
                         System.out.printf("Field %s has no data set. Setting as null\n", field.getName());
                         continue;
                     }
-                    Object serialized = JsonConverter.serialize(fieldName, fieldType);
+                    Object serialized;
+
+                    NodeSerializable nodeSerializable = fieldType.getAnnotation(NodeSerializable.class);
+
+                    if(nodeSerializable != null){
+                        serialized = JsonConverter.serialize(fieldName, fieldType, nodeSerializable.serializer());
+                    }
+                    else{
+                        serialized = JsonConverter.serialize(fieldName, fieldType);
+                    }
+
 
                     if(serialized == null){
                         serialized = JsonConverter.convert(fieldName, fieldType);
@@ -85,7 +96,7 @@ public class AbstractJsonEntityDeserializer<T extends JsonEntity> extends Entity
                     continue;
                 }
 
-                Object serializedObject = JsonConverter.serialize(node, fieldType, serializer);
+                Object serializedObject = JsonConverter.serialize(fieldName, fieldType, serializer);
 
                 field.set(entityData, serializedObject);
 
