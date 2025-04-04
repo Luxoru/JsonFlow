@@ -3,6 +3,8 @@ package me.luxoru.example.entity.impl;
 import lombok.Getter;
 import me.luxoru.example.entity.AbstractEntity;
 import me.luxoru.example.util.Position;
+import me.luxoru.example.util.serializer.PositionSerializer;
+import me.luxoru.jsonflow.api.annotation.FlowField;
 import me.luxoru.jsonflow.api.annotation.FlowSerializable;
 
 @Getter

@@ -1,14 +1,14 @@
 package me.luxoru.example.util;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import me.luxoru.jsonflow.api.annotation.FlowSerializable;
+import me.luxoru.example.util.serializer.PositionSerializer;
+import me.luxoru.jsonflow.api.annotation.NodeSerializable;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@NodeSerializable(serializer = PositionSerializer.class)
 public final class Position {
 
     private float x;

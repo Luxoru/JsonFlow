@@ -25,10 +25,8 @@ public class PositionSerializer implements JsonNodeConversionHandler<Position> {
     public Position serialize(JsonNode node) {
 
         System.out.println("Using pos serializer");
-
-        JsonNode positionNode = node.get("position");
-        float x = positionNode.get("x").floatValue();
-        float y = positionNode.get("y").floatValue();
+        float x = node.get("x").floatValue();
+        float y = node.get("y").floatValue();
 
         return new Position(x,y);
     }
