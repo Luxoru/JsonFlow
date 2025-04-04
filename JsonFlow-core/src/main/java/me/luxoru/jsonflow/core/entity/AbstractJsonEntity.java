@@ -1,13 +1,12 @@
 package me.luxoru.jsonflow.core.entity;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import me.luxoru.jsonflow.api.annotation.FlowField;
 import me.luxoru.jsonflow.api.annotation.FlowSerializable;
 import me.luxoru.jsonflow.api.entity.JsonEntity;
-import me.luxoru.jsonflow.api.serialize.JsonFlowConversionHandler;
+import me.luxoru.jsonflow.api.serialize.JsonNodeConversionHandler;
 import me.luxoru.jsonflow.core.serializer.AbstractJsonEntityDeserializer;
 import me.luxoru.jsonflow.core.serializer.JsonConverter;
 import me.luxoru.jsonflow.core.util.ReflectionUtilities;
@@ -63,7 +62,7 @@ public abstract class AbstractJsonEntity implements JsonEntity {
                 fieldName = field.getName();
             }
             else{
-                fieldName = flowField.value();
+                fieldName = (flowField.value().equalsIgnoreCase("") ? field.getName() : flowField.value());
             }
 
             Object value = ReflectionUtilities.getField(this, field.getName(), field.getType());
@@ -72,9 +71,9 @@ public abstract class AbstractJsonEntity implements JsonEntity {
                 jsonObject.putNull(fieldName);
                 continue;
             }
-            Class<? extends JsonFlowConversionHandler> serializer = flowField == null ? JsonFlowConversionHandler.class : flowField.serializer();
+            Class<? extends JsonNodeConversionHandler> serializer = flowField == null ? JsonNodeConversionHandler.class : flowField.serializer();
 
-            if (serializer.equals(JsonFlowConversionHandler.class)) {
+            if (serializer.equals(JsonNodeConversionHandler.class)) {
 
                 if (field.getType().isPrimitive() || ReflectionUtilities.isWrapperType(field.getType())) {
 
@@ -95,8 +94,9 @@ public abstract class AbstractJsonEntity implements JsonEntity {
                 else {
                     ObjectNode deserialize = JsonConverter.deserialize(value, value.getClass());
                     if(deserialize == null){
-                        System.out.printf("Unknown type handled (%s). Does it need a custom handler? Handling as string\n".formatted(field.getType()));
-                        jsonObject.put(fieldName, value.toString());
+                        //TODO: make custom valueSetter check for loops etc. NodeSerializable annotation for this
+
+                        jsonObject.set(fieldName, objectMapper.valueToTree(value));
                     }
                     else{
                         jsonObject.set(fieldName, deserialize);
