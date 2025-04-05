@@ -6,9 +6,7 @@ import java.util.Set;
 
 public interface JsonEntity {
 
-    default Set<JsonEntity> getParents() {
-        return null;
-    }
+    Set<JsonEntity> getParents();
 
     void addParent(JsonEntity parent);
 
