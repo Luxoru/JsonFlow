@@ -23,7 +23,7 @@ import java.util.Set;
 @JsonDeserialize(using = AbstractJsonEntityDeserializer.class)
 public abstract class AbstractJsonEntity implements JsonEntity {
 
-    private Set<AbstractJsonEntity> parents;
+    private Set<JsonEntity> parents = new HashSet<>();
     private String fileName;
 
     protected final FlowObjectMapper objectMapper = (FlowObjectMapper) FlowObjectMapper.instance()
@@ -40,8 +40,8 @@ public abstract class AbstractJsonEntity implements JsonEntity {
     public ObjectNode toJsonObject(){
 
         ObjectNode jsonObject = objectMapper.createObjectNode();
-        if(this.parents != null){
-            for (AbstractJsonEntity parent : this.getParents()) {
+        if(this.parents.isEmpty()){
+            for (JsonEntity parent : this.getParents()) {
                 jsonObject.setAll(parent.toJsonObject());
             }
 
@@ -147,7 +147,7 @@ public abstract class AbstractJsonEntity implements JsonEntity {
     }
 
     @Override
-    public Set<AbstractJsonEntity> getParents() {
+    public Set<JsonEntity> getParents() {
         return Set.copyOf(this.parents);
     }
 

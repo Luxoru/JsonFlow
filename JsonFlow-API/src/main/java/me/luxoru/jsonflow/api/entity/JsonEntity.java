@@ -6,7 +6,7 @@ import java.util.Set;
 
 public interface JsonEntity {
 
-    default Set<? extends JsonEntity> getParents() {
+    default Set<JsonEntity> getParents() {
         return null;
     }
 
