@@ -66,9 +66,6 @@ public class JsonConverter {
         try {
             return objectMapper.treeToValue(node, clazz);
         } catch (JsonProcessingException e) {
-            if(clazz.isAnnotationPresent(NodeSerializable.class)){
-                return null;
-            }
             throw new RuntimeException("Unable to convert object to map for class (%s) and node (%s)".formatted(clazz, node.asText()));
         }
     }

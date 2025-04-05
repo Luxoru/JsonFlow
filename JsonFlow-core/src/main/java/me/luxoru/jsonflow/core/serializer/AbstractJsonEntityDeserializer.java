@@ -71,7 +71,9 @@ public class AbstractJsonEntityDeserializer<T extends JsonEntity> extends Entity
 
 
                     if(serialized == null){
-                        serialized = JsonConverter.convert(fieldName, fieldType);
+                        if(nodeSerializable == null){
+                            serialized = JsonConverter.convert(fieldName, fieldType);
+                        }
                     }
                     field.set(entityData, serialized);
                     continue;
