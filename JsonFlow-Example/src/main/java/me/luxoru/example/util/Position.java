@@ -8,7 +8,7 @@ import me.luxoru.jsonflow.api.annotation.NodeSerializable;
 
 @Getter
 @Setter
-@NodeSerializable(serializer = PositionSerializer.class)
+@NoArgsConstructor
 public final class Position {
 
     private float x;

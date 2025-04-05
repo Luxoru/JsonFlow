@@ -10,8 +10,6 @@ public class PositionSerializer implements JsonNodeConversionHandler<Position> {
     @Override
     public ObjectNode deserialize(Position object, ObjectMapper mapper) {
 
-        System.out.println("Using pos deserializer");
-
         ObjectNode positionNode = mapper.createObjectNode();
 
         positionNode.put("x", object.getX());
@@ -24,7 +22,6 @@ public class PositionSerializer implements JsonNodeConversionHandler<Position> {
     @Override
     public Position serialize(JsonNode node) {
 
-        System.out.println("Using pos serializer");
         float x = node.get("x").floatValue();
         float y = node.get("y").floatValue();
 
