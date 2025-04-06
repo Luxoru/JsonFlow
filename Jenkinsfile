@@ -15,7 +15,7 @@ pipeline {
                 echo "Building..."
                 script {
                     // Run Maven build
-                    sh mvn clean install -U
+                    sh 'mvn clean install -U'
                 }
             }
         }
