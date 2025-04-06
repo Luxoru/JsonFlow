@@ -41,15 +41,6 @@ pipeline {
                 // then list artifacts with known paths
                 def artifactsList = ""
                 def artifactsPath = "${env.JOB_NAME}/${env.BUILD_NUMBER}"
-                // You need to manually list your artifacts here based on your build process
-                def artifactFiles = findFiles(glob: 'target/*.jar')
-                
-                if (artifactFiles.length > 0) {
-                    artifactsList = "**Artifacts:**\n"
-                    artifactFiles.each { artifact ->
-                        artifactsList += "• ${env.BUILD_URL}artifact/${artifact.path}\n"
-                    }
-                }
                 
                 def description = """**Build:** ${env.BUILD_NUMBER}
 **Status:** ${buildStatus}
