@@ -33,8 +33,23 @@ pipeline {
                 if (currentBuild.changeSets.size() == 0) {
                     changeSet = "No changes."
                 } else {
-                    // Format your change info here if needed
-                    changeSet = "Changes detected."
+                
+                    def commitMessages = []
+                    
+                    // Iterate through each change set to extract commit details
+                    currentBuild.changeSets.each { changeSetItem ->
+                        changeSetItem.items.each { entry ->
+                            // Append the commit message and commit hash (address)
+                            commitMessages.add("Commit: ${entry.commitId}, Message: ${entry.msg}")
+                        }
+                    }
+                    
+                    // Join commit messages with a line break
+                    if (commitMessages.size() > 0) {
+                        changeSet = "**Changes**:\n" + commitMessages.join("\n")
+                    } else {
+                        changeSet = "No changes."
+                    }
                 }
                 
                 // Instead of using rawBuild.artifacts, we'll use archiveArtifacts first
