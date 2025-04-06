@@ -65,7 +65,7 @@ ${artifactsList}"""
                 // Update the status on GitHub using the GitHub plugin
                 def status = currentBuild.currentResult == 'SUCCESS' ? 'success' : 'failure'
                 github(
-                    credentialsId: 'github-private-key', // Use the correct GitHub credentials ID
+                    credentialsId: GITHUB_TOKEN, // Use the correct GitHub credentials ID
                     account: 'Luxoru',  // Replace with your GitHub username
                     repo: 'JsonFlow',  // Replace with your repository name
                     sha: commitSha,                // Use the commit SHA
