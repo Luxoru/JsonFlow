@@ -34,19 +34,19 @@ pipeline {
                     changeSet = "No changes."
                 } else {
                 
-                    def commitMessages = []
-                    
-                    // Iterate through each change set to extract commit details
-                    currentBuild.changeSets.each { changeSetItem ->
-                        changeSetItem.items.each { entry ->
-                            // Append the commit message and commit hash (address)
-                            commitMessages.add("Commit: ${entry.commitId}, Message: ${entry.msg}")
+                   def changes = []
+                    currentBuild.changeSets.each { cs ->
+                        cs.items.each { item ->
+                            def commitId = item.commitId.substring(0, 6)  // Get first 6 chars of commit hash
+                            def commitMsg = item.msg.split('\n')[0].trim() // Get first line of commit message
+                            def author = item.author.toString()
+                            changes.add("• ${commitId} ${commitMsg} - ${author}")
                         }
                     }
                     
                     // Join commit messages with a line break
                     if (commitMessages.size() > 0) {
-                        changeSet = "**Changes**:\n" + commitMessages.join("\n")
+                        changeSet = "**Changes**:\n" + changes.join('\n')
                     } else {
                         changeSet = "No changes."
                     }
