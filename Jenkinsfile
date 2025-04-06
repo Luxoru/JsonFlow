@@ -42,13 +42,20 @@ pipeline {
         stage('Update GitHub Status') {
             steps {
                 script {
-                    // Update the status on GitHub
+                    // Get the commit SHA (make sure the commit has been checked out)
+                    def commitSha = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
+                    
+                    // Update the status on GitHub using the GitHub plugin
                     def status = currentBuild.currentResult == 'SUCCESS' ? 'success' : 'failure'
                     github(
-                        status: status,
-                        context: 'Jenkins Build',
-                        description: "Build completed",
-                        targetUrl: env.BUILD_URL
+                        credentialsId: GITHUB_TOKEN, // Use the correct GitHub credentials
+                        repoOwner: 'Luxoru',  // Replace with your GitHub username
+                        repository: 'JsonFlow',  // Replace with your repository name
+                        commitSha: commitSha,                // Use the commit SHA
+                        status: status,                      // 'success' or 'failure'
+                        context: 'Jenkins Build',            // A description or context for the status
+                        description: "Build completed",      // Additional description
+                        targetUrl: env.BUILD_URL            // Link back to Jenkins build URL
                     )
                 }
             }
