@@ -37,12 +37,17 @@ pipeline {
                     changeSet = "Changes detected."
                 }
                 
+                // Instead of using rawBuild.artifacts, we'll use archiveArtifacts first
+                // then list artifacts with known paths
                 def artifactsList = ""
-                def artifacts = currentBuild.rawBuild.artifacts
-                if (artifacts.size() > 0) {
+                def artifactsPath = "${env.JOB_NAME}/${env.BUILD_NUMBER}"
+                // You need to manually list your artifacts here based on your build process
+                def artifactFiles = findFiles(glob: 'target/*.jar')
+                
+                if (artifactFiles.length > 0) {
                     artifactsList = "**Artifacts:**\n"
-                    artifacts.each { artifact ->
-                        artifactsList += "• ${env.BUILD_URL}artifact/${artifact.relativePath}\n"
+                    artifactFiles.each { artifact ->
+                        artifactsList += "• ${env.BUILD_URL}artifact/${artifact.path}\n"
                     }
                 }
                 
@@ -54,7 +59,7 @@ ${artifactsList}"""
                 
                 discordSend(
                     description: description,
-                    footer: "Jenkins v${Jenkins.instance.getVersion()}, Discord Notifier v${DiscordNotifier.version}",
+                    footer: "Jenkins",  // Simplified to avoid version issues
                     link: env.BUILD_URL,
                     result: currentBuild.currentResult,
                     title: "${env.JOB_NAME} #${env.BUILD_NUMBER}",
@@ -68,7 +73,7 @@ ${artifactsList}"""
                 
                 // Update the status on GitHub using the GitHub plugin
                 def status = currentBuild.currentResult == 'SUCCESS' ? 'success' : 'failure'
-                github(
+                githubNotify(
                     credentialsId: 'github-private-key', // Use the correct GitHub credentials ID
                     account: 'Luxoru',  // Replace with your GitHub username
                     repo: 'JsonFlow',  // Replace with your repository name
