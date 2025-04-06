@@ -44,7 +44,7 @@ pipeline {
                 script {
                     // Update the status on GitHub
                     def status = currentBuild.currentResult == 'SUCCESS' ? 'success' : 'failure'
-                    githubNotify(
+                    github(
                         status: status,
                         context: 'Jenkins Build',
                         description: "Build completed",
