@@ -19,9 +19,6 @@ pipeline {
         stage('Test') {
             steps {
                 echo "Testing..."
-                script {
-                    // Add your test logic here
-                }
             }
         }
         stage('Notify Discord') {
