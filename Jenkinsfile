@@ -45,7 +45,7 @@ pipeline {
                     }
                     
                     // Join commit messages with a line break
-                    if (commitMessages.size() > 0) {
+                    if (changes.size() > 0) {
                         changeSet = "**Changes**:\n" + changes.join('\n')
                     } else {
                         changeSet = "No changes."
