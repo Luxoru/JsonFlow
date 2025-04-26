@@ -5,7 +5,7 @@ pipeline {
     }
     environment {
         // Replace with your actual webhook URL
-        DISCORD_WEBHOOK_URL = "https://discordapp.com/api/webhooks/1356210763815059486/mi2m-E4GbZ-HTa2DLGSrfHPAMzsguo-g-gCfcToPll5sHbWinBenabJvjnwGho7F2Yqt"
+        DISCORD_WEBHOOK_URL = credentials('discord-webhook')
         // If necessary, set GitHub token or credentials
         GITHUB_TOKEN = credentials('github-private-key')  // Set this in Jenkins Credentials
     }
