@@ -1,9 +1,0 @@
-<component-set>
-    <components>
-        <component>
-            <role>org.apache.maven.AbstractMavenLifecycleParticipant</role>
-            <implementation>me.luxoru.plugin.ParametersLifecycleParticipant</implementation>
-            <role-hint>parameters-configurator</role-hint>
-        </component>
-    </components>
-</component-set>

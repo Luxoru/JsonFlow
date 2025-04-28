@@ -12,7 +12,6 @@
         <module>JsonFlow-API</module>
         <module>JsonFlow-core</module>
         <module>JsonFlow-Example</module>
-        <module>JsonFlow-Plugin</module>
     </modules>
 
     <properties>
